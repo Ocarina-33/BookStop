@@ -1,0 +1,228 @@
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <h3 class="card-title" style="color: #8B4513;">
+                        <i class="bi bi-cart me-2"></i>Order Management
+                    </h3>
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Manage and track all customer orders
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Success/Error Messages -->
+            <div id="messageDiv" class="alert alert-dismissible fade show d-none" role="alert">
+                <span id="messageText"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <!-- Order State Filter -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h6 class="card-title mb-3">Filter Orders by Status</h6>
+                    <div class="btn-group" role="group" aria-label="Order state filter">
+                        <a href="/admin/order?state=all" class="btn <%= (typeof currentState !== 'undefined' && currentState === 'all') ? 'btn-primary' : 'btn-outline-primary' %>">
+                            All Orders <!--(<%= orders.length %>) -->
+                        </a>
+                        <a href="/admin/order?state=1" class="btn <%= (typeof currentState !== 'undefined' && currentState === '1') ? 'btn-warning' : 'btn-outline-warning' %>">
+                            Processing
+                        </a>
+                        <a href="/admin/order?state=2" class="btn <%= (typeof currentState !== 'undefined' && currentState === '2') ? 'btn-info' : 'btn-outline-info' %>">
+                            Approved
+                        </a>
+                        <a href="/admin/order?state=3" class="btn <%= (typeof currentState !== 'undefined' && currentState === '3') ? 'btn-secondary' : 'btn-outline-secondary' %>">
+                            On Shipping
+                        </a>
+                        <a href="/admin/order?state=4" class="btn <%= (typeof currentState !== 'undefined' && currentState === '4') ? 'btn-success' : 'btn-outline-success' %>">
+                            Shipped
+                        </a>
+                        <a href="/admin/order?state=5" class="btn <%= (typeof currentState !== 'undefined' && currentState === '5') ? 'btn-dark' : 'btn-outline-dark' %>">
+                            Completed
+                        </a>
+                        <a href="/admin/order?state=cancelled" class="btn <%= (typeof currentState !== 'undefined' && currentState === 'cancelled') ? 'btn-danger' : 'btn-outline-danger' %>">
+                            Cancelled
+                        </a>
+                        <a href="/admin/order?state=7" class="btn <%= (typeof currentState !== 'undefined' && currentState === '7') ? 'btn-warning' : 'btn-outline-warning' %>">
+                            Returned
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">
+                        (Showing <%= orders.length %> 
+                        <% if (typeof currentState !== 'undefined' && currentState !== 'all') { %>
+                            <% 
+                                let stateText = '';
+                                switch(currentState) {
+                                    case '1': stateText = 'Processing'; break;
+                                    case '2': stateText = 'Approved'; break;
+                                    case '3': stateText = 'On Shipping'; break;
+                                    case '4': stateText = 'Shipped'; break;
+                                    case '5': stateText = 'Completed'; break;
+                                    case '6': 
+                                    case 'cancelled': stateText = 'Cancelled'; break;
+                                    case '7': stateText = 'Returned'; break;
+                                    default: stateText = 'Unknown State';
+                                }
+                            %>
+                            <%= stateText %> orders)
+                        <% } else { %>
+                            orders)
+                        <% } %>
+                    </h6>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead style="background-color: #8B4513; color: white;">
+                                <tr>
+                                    <th scope="col">Order #</th>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Total Price</th>
+                                    <th scope="col">Items</th>
+                                    <th scope="col">Created Date</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for(let i = 0; i < orders.length; i++){ %>
+                                    <tr>
+                                        <td>
+                                            <span class="fw-bold" style="color: #8B4513;">
+                                                Order #<%= orders[i].id %>
+                                            </span>
+                                        </td>
+                                        <td class="fw-semibold"><%= orders[i].name %></td>
+                                        <td class="text-success fw-bold">৳<%= orders[i].total_price %></td>
+                                        <td>
+                                            <span class="badge bg-info text-dark">
+                                                <%= orders[i].total_item %> items
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted" style="font-size: 0.9em;">
+                                                <%= new Date(orders[i].created_at).toLocaleDateString('en-GB') %>
+                                            </span>
+                                            <br>
+                                            <small class="text-muted">
+                                                <%= new Date(orders[i].created_at).toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'}) %>
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <% 
+                                                let statusInfo = '';
+                                                let badgeClass = '';
+                                                switch(parseInt(orders[i].state)) {
+                                                    case 1: statusInfo = 'Processing'; badgeClass = 'bg-warning'; break;
+                                                    case 2: statusInfo = 'Approved'; badgeClass = 'bg-info'; break;
+                                                    case 3: statusInfo = 'On Shipping'; badgeClass = 'bg-secondary'; break;
+                                                    case 4: statusInfo = 'Shipped'; badgeClass = 'bg-success'; break;
+                                                    case 5: statusInfo = 'Completed'; badgeClass = 'bg-dark'; break;
+                                                    case 6: statusInfo = 'Cancelled'; badgeClass = 'bg-danger'; break;
+                                                    case 7: statusInfo = 'Returned'; badgeClass = 'bg-warning'; break;
+                                                    default: statusInfo = 'Unknown'; badgeClass = 'bg-light text-dark';
+                                                }
+                                            %>
+                                            <span class="badge <%= badgeClass %>">
+                                                <%= statusInfo %>
+                                            </span>
+                                            <form action="/admin/order/update" method="post" class="d-inline mt-2">
+                                                <input type="hidden" name="orderId" value="<%= orders[i].id %>"/>
+                                                <select id="select<%= i %>" name="orderStatus" class="form-select form-select-sm" style="min-width: 140px;">
+                                                    <option value="1">Processing</option>
+                                                    <option value="2">Approved</option>
+                                                    <option value="3">On Shipping</option>
+                                                    <option value="4">Shipped</option>
+                                                    <option value="5">Completed</option>
+                                                    <option value="6">Cancelled</option>
+                                                    <option value="7">Returned</option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="submit" class="btn text-white" style="background-color: #228B22;">
+                                                    <i class="bi bi-check-circle me-1"></i>Update
+                                                </button>
+                                                </form>
+                                                <a class="btn btn-outline-primary btn-sm" href="/admin/order/<%= orders[i].id %>">
+                                                    <i class="bi bi-eye me-1"></i>Details
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set the current status for each order
+    let orders = <%- JSON.stringify(orders) %>;
+    for(let i = 0; i < orders.length; i++){
+        document.getElementById('select' + i).value = orders[i].state;
+    }
+    
+    // Handle success/error messages
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
+    
+    if (success) {
+        showMessage(success, 'success');
+    } else if (error) {
+        showMessage(error, 'danger');
+    }
+    
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('messageDiv');
+        const messageText = document.getElementById('messageText');
+        
+        messageDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        messageText.textContent = message;
+        messageDiv.classList.remove('d-none');
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            messageDiv.classList.add('d-none');
+        }, 5000);
+    }
+</script>

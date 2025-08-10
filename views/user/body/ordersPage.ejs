@@ -1,0 +1,162 @@
+
+<div class="row">
+    <div class="col-lg-3 col-md-4">
+        <!-- User Profile Card -->
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-4">
+                        <img class="circular shadow-sm" src="<%= user && user.image ? user.image : '/images/propic.jpg' %>" width="60" height="60" alt="Profile Picture">
+                    </div>
+                    <div class="col-8">
+                        <p class="text-muted mb-1">Welcome back,</p>
+                        <h5 class="mb-0 fw-bold"><%=user.name%></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Menu -->
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="/My-section/profile" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-person-circle me-3"></i>My Account
+                    </a>
+                    <a href="/My-section/orders" class="list-group-item list-group-item-action active border-0 fw-semibold">
+                        <i class="bi bi-bag-check me-3"></i>My Orders
+                    </a>
+                    <a href="/My-section/wishlist" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-heart me-3"></i>My Wishlist
+                    </a>
+                    <a href="/My-section/reviews" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-star me-3"></i>My Reviews
+                    </a>
+                    <a href="/my-section/notifications" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-bell me-3"></i>Notifications
+                                                    <% if (unreadCount > 0) { %>
+                                <span class="badge bg-danger rounded-pill float-end"><%= unreadCount %></span>
+                            <% } %>
+                    </a>
+                </div>
+                </div>
+            </div>
+        </div>
+    
+    
+    <div class="col-lg-9 col-md-8">
+        <!-- Header Section -->
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-bag-check-fill text-primary me-3 fs-4"></i>
+                            <div>
+                                <h3 class="mb-1">My Orders</h3>
+                                <p class="text-muted mb-0">Total Orders: <span class="badge bg-primary"><%=items.length%></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <form action="/My-section/orders" method="get" class="d-flex align-items-center justify-content-end">
+                            <label class="form-label mb-0 me-2 fw-semibold">Filter by Status:</label>
+                            <select id="orderStatus" name="orderStatus" class="form-select me-2" style="max-width: 200px;">
+                                <option value="0">All Orders</option>
+                                <option value="1">Processing</option>
+                                <option value="2">Approved</option>
+                                <option value="3">On Shipping</option>
+                                <option value="4">Shipped</option>
+                                <option value="5">Completed</option>
+                                <option value="6">Cancelled</option>
+                                <option value="7">Returned</option>
+                            </select>
+                            <button class="btn btn-warning rounded-pill px-3" type="submit">
+                                <i class="bi bi-funnel me-1"></i>Filter
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Orders Grid -->
+        <div class="row mt-3">
+            <%let statues = ['PROCESSING','APPROVED','ON SHIPPING','SHIPPED','COMPLETED','CANCELLED','RETURNED'];%>
+            <%let statusColors = ['warning','info','primary','success','success','danger','secondary'];%>
+            <%let statusIcons = ['clock','check-circle','truck','box-seam','check-circle-fill','x-circle','arrow-return-left'];%>
+            
+            <% if(items.length === 0) { %>
+                <div class="col-12">
+                    <div class="card shadow border-0">
+                        <div class="card-body text-center py-5">
+                            <i class="bi bi-bag display-1 text-muted mb-3"></i>
+                            <h4 class="text-muted">No orders found</h4>
+                            <p class="text-muted">You haven't placed any orders yet. Start shopping to see your orders here!</p>
+                            <a href="/books" class="btn btn-primary rounded-pill px-4">
+                                <i class="bi bi-book me-2"></i>Browse Books
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <%for(let i = 0; i < items.length; i++){%>
+                    <div class="col-lg-6 col-md-12 mb-4">
+                        <div class="card shadow border-0 h-100 order-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h5 class="card-title mb-1">Order #<%=items[i].user_order_number%></h5>
+                                        <p class="text-muted small mb-0">
+                                            <i class="bi bi-calendar3 me-1"></i>
+                                            <%= new Date(items[i].created_at || Date.now()).toLocaleDateString() %>
+                                        </p>
+                                    </div>
+                                    <span class="badge bg-<%=statusColors[items[i].state-1]%> fs-6 rounded-pill">
+                                        <i class="bi bi-<%=statusIcons[items[i].state-1]%> me-1"></i>
+                                        <%=statues[items[i].state-1]%>
+                                    </span>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-currency-dollar text-success me-2"></i>
+                                            <div>
+                                                <p class="mb-0 small text-muted">Total Amount</p>
+                                                <h6 class="mb-0 fw-bold text-success">৳<%=items[i].total_price%></h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-box-seam text-primary me-2"></i>
+                                            <div>
+                                                <p class="mb-0 small text-muted">Total Items</p>
+                                                <h6 class="mb-0 fw-bold"><%=items[i].total_item%> items</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <a class="btn btn-outline-primary rounded-pill" href="<%='/My-section/orders/track/'+items[i].user_order_number%>">
+                                        <i class="bi bi-geo-alt me-2"></i>Track Order
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <%}%>
+            <% } %>
+        </div>
+
+
+    </div>
+</div>
+</div>
+
+<script>
+    document.getElementById('orderStatus').value = '<%=_status%>';
+   // console.log(document.getElementById('orderStatus'));
+</script>

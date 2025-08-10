@@ -1,0 +1,211 @@
+<!-- Real-time session debugging page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Debug - Real Time</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { border: 1px solid #ccc; margin: 10px 0; padding: 15px; background: #f9f9f9; }
+        .cookie { background: #e6f3ff; padding: 5px; margin: 2px 0; border-left: 3px solid #007bff; }
+        .active { background: #d4edda; border-left-color: #28a745; }
+        .session-info { background: #fff3cd; padding: 10px; margin: 5px 0; }
+        button { padding: 8px 12px; margin: 5px; cursor: pointer; }
+        .clear-btn { background: #dc3545; color: white; border: none; }
+        .refresh-btn { background: #28a745; color: white; border: none; }
+        pre { background: #f8f9fa; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Session Debug</h1>
+    
+    <div class="debug-section">
+        <h2>Current Cookies</h2>
+        <div id="cookies-display"></div>
+        <button onclick="refreshCookies()" class="refresh-btn">Refresh Cookies</button>
+        <button onclick="clearAllCookies()" class="clear-btn">Clear All Cookies</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>Server Session Data</h2>
+        <div id="server-session"></div>
+        <button onclick="refreshServerSession()" class="refresh-btn">Refresh Server Data</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>Quick Login (for testing)</h2>
+        <button onclick="quickLogin('eren@gmail.com', 'Eren')" class="refresh-btn">Quick Login Eren</button>
+        <button onclick="quickLogin('miku@gmail.com', 'Miku')" class="refresh-btn">Quick Login Miku</button>
+        <button onclick="quickLogin('test@gmail.com', 'Test')" class="refresh-btn">Quick Login Test</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>Session Actions</h2>
+        <div id="available-sessions"></div>
+        <button onclick="loadAvailableSessions()" class="refresh-btn">Load Available Sessions</button>
+    </div>
+
+    <script>
+        // Get all cookies
+        function getAllCookies() {
+            const cookies = {};
+            document.cookie.split(';').forEach(cookie => {
+                const [name, value] = cookie.trim().split('=');
+                if (name) cookies[name] = value;
+            });
+            return cookies;
+        }
+
+        // Display cookies in a readable format
+        function refreshCookies() {
+            const cookies = getAllCookies();
+            const display = document.getElementById('cookies-display');
+            
+            let html = '';
+            for (const [name, value] of Object.entries(cookies)) {
+                const isActive = name === 'activeSession';
+                const isSessionToken = name.startsWith('sessionToken_');
+                const cssClass = isActive ? 'cookie active' : (isSessionToken ? 'cookie' : 'cookie');
+                
+                html += `<div class="${cssClass}">
+                    <strong>${name}:</strong> ${value}
+                    ${isActive ? ' (ACTIVE SESSION)' : ''}
+                    ${isSessionToken ? ' (SESSION TOKEN)' : ''}
+                </div>`;
+            }
+            
+            if (Object.keys(cookies).length === 0) {
+                html = '<div class="cookie">No cookies found</div>';
+            }
+            
+            display.innerHTML = html;
+        }
+
+        // Get server session data
+        async function refreshServerSession() {
+            try {
+                const response = await fetch('/debug/session');
+                const data = await response.json();
+                
+                document.getElementById('server-session').innerHTML = 
+                    `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                document.getElementById('server-session').innerHTML = 
+                    `<div style="color: red;">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Quick login function
+        async function quickLogin(email, name) {
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `email=${encodeURIComponent(email)}&password=123456`
+                });
+                
+                if (response.ok) {
+                    console.log(`✅ Login successful for ${name}`);
+                    // Refresh displays
+                    setTimeout(() => {
+                        refreshCookies();
+                        refreshServerSession();
+                        loadAvailableSessions();
+                    }, 500);
+                } else {
+                    console.error(`❌ Login failed for ${name}`);
+                }
+            } catch (error) {
+                console.error(`❌ Login error for ${name}:`, error);
+            }
+        }
+
+        // Load available sessions for switching
+        async function loadAvailableSessions() {
+            try {
+                const response = await fetch('/debug/sessions');
+                const data = await response.json();
+                
+                const display = document.getElementById('available-sessions');
+                let html = '<h4>Available Sessions:</h4>';
+                
+                if (data.allSessions && data.allSessions.length > 0) {
+                    data.allSessions.forEach(session => {
+                        const isActive = session.isActive ? ' (ACTIVE)' : '';
+                        const buttonText = session.isActive ? 'Current' : 'Switch';
+                        const buttonClass = session.isActive ? 'clear-btn' : 'refresh-btn';
+                        
+                        html += `<div class="session-info">
+                            <strong>${session.userName}</strong> (${session.userEmail})${isActive}<br>
+                            <small>Session ID: ${session.sessionId}</small><br>
+                            <button onclick="switchToSession('${session.sessionId}')" class="${buttonClass}">
+                                ${buttonText}
+                            </button>
+                        </div>`;
+                    });
+                } else {
+                    html += '<div class="session-info">No active sessions found</div>';
+                }
+                
+                display.innerHTML = html;
+            } catch (error) {
+                document.getElementById('available-sessions').innerHTML = 
+                    `<div style="color: red;">Error loading sessions: ${error.message}</div>`;
+            }
+        }
+
+        // Switch to a specific session
+        async function switchToSession(sessionId) {
+            try {
+                const response = await fetch('/debug/switch-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ sessionId })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    console.log(`✅ Switched to session: ${sessionId}`);
+                    // Refresh all displays
+                    setTimeout(() => {
+                        refreshCookies();
+                        refreshServerSession();
+                        loadAvailableSessions();
+                    }, 500);
+                } else {
+                    console.error(`❌ Failed to switch session: ${result.message}`);
+                }
+            } catch (error) {
+                console.error(`❌ Switch session error:`, error);
+            }
+        }
+
+        // Clear all cookies
+        function clearAllCookies() {
+            const cookies = getAllCookies();
+            for (const name of Object.keys(cookies)) {
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+            }
+            setTimeout(refreshCookies, 100);
+        }
+
+        // Auto-refresh every 5 seconds
+        setInterval(() => {
+            refreshCookies();
+            refreshServerSession();
+        }, 5000);
+
+        // Initial load
+        window.addEventListener('load', () => {
+            refreshCookies();
+            refreshServerSession();
+            loadAvailableSessions();
+        });
+    </script>
+</body>
+</html>

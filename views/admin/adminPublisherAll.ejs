@@ -1,0 +1,110 @@
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <h3 class="card-title" style="color: #8B4513;">
+                        <i class="bi bi-building me-2"></i>Publisher Management
+                    </h3>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <a class="btn text-white" href="/admin/publisher/add" style="background-color: #228B22;">
+                                <i class="bi bi-plus-lg me-1"></i>ADD NEW PUBLISHER
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <form method="GET" action="/admin/publisher" class="d-flex">
+                                <input type="text" class="form-control me-2" name="search" 
+                                       placeholder="Search publishers by name..." 
+                                       value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>">
+                                <button class="btn btn-outline-secondary" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                                <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                                    <a href="/admin/publisher" class="btn btn-outline-danger ms-2">
+                                        <i class="bi bi-x"></i>
+                                    </a>
+                                <% } %>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead style="background-color: #8B4513; color: white;">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Founding Date</th>
+                                    <th scope="col">Book Count</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for(let i = 0; i < publishers.length; i++){ %>
+                                    <tr>
+                                        <th scope="row"><%= publishers[i].id %></th>
+                                        <td>
+                                            <img class="img-thumbnail" width="60" height="60" 
+                                                 src="<%= publishers[i].image %>" style="object-fit: cover;" alt="Publisher logo"/>
+                                        </td>
+                                        <td class="fw-semibold"><%= publishers[i].name %></td>
+                                        <td>
+                                            <%= publishers[i].founding_date ? new Date(publishers[i].founding_date).toLocaleDateString() : 'N/A' %>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                <%= publishers[i].book_count || 0 %> books
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-sm text-white" href="<%= '/admin/publisher/edit/' + publishers[i].id %>" 
+                                               style="background-color: #228B22;">
+                                                <i class="bi bi-pencil-square me-1"></i>Edit
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

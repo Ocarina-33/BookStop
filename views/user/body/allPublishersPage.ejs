@@ -1,0 +1,54 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Publishers</li>
+    </ol>
+</nav>
+
+<style>
+.publisher-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.publisher-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.publisher-card img {
+    transition: transform 0.3s ease;
+}
+
+.publisher-card:hover img {
+    transform: scale(1.05);
+}
+</style>
+
+<h6>(Showing <%=start+1%> to <%=start+publishers.length%> of <%=cnt%> publishers)</h6>
+<div class="d-flex flex-wrap justify-content-evenly">
+    <% for(let i = 0;i < publishers.length;i++){ %>
+
+    <div class="card publisher-card mb-3 m-1" style="width: 15rem;">
+        <img class="card-img-top p-3" src="<%= publishers[i].image %>" alt="<%= publishers[i].name %>" style="height: 200px; object-fit: contain;">
+        <div class="card-body text-center">
+            <h5 class="card-title" style="color: #266dd3;font-weight: 650;"><%= publishers[i].name %></h5>
+            <p class="card-text text-muted"><%= publishers[i].book_count %> Books Published</p>
+            <% if(publishers[i].founding_date) { %>
+                <p class="card-text"><small class="text-muted">Founded: <%= new Date(publishers[i].founding_date).getFullYear() %></small></p>
+            <% } %>
+            <div class="d-grid gap-2">
+                <a href="<%= '/publishers/' + publishers[i].id %>" class="btn btn-success">
+                    <i class="bi bi-building"></i>
+                    View Publisher
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <% } %>
+    <br/>
+</div>
+
+<div style="margin: auto" id="paginationDiv" data-pages="<%=pages%>" data-page="<%=page%>" data-href="<%=target%>"></div>
+<script async src="/scripts/pagination.js"></script>

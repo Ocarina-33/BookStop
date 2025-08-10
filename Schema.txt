@@ -1,0 +1,613 @@
+BookShop Database Schema (DDL)
+========================================
+Online Bookstore Management System
+Course: CSE216 Database Sessional
+Students: Humaira Ali Shuvra (2205126), Mahjabin Porshi (2205127)
+Supervisor: Niaz Rahman, Dept. of CSE, BUET
+========================================
+
+-- Drop all existing tables (CASCADE removes dependencies)
+DO
+$$
+DECLARE
+    _tbl TEXT;
+BEGIN
+    FOR _tbl IN
+        SELECT tablename FROM pg_tables WHERE schemaname = 'public'
+    LOOP
+        EXECUTE format('DROP TABLE IF EXISTS %I CASCADE;', _tbl);
+    END LOOP;
+END;
+$$;
+
+
+-- CORE ENTITY TABLES
+========================================
+
+-- 1. Author Table
+-- Stores author information with authentication capability
+CREATE TABLE author (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    password VARCHAR(1024),
+    image VARCHAR(1000) DEFAULT 'https://www.123rf.com/photo_91832679_man-avatar-icon-flat-illustration-of-man-avatar-vector-icon-isolated-on-white-background.html',
+    description VARCHAR(3000)
+);
+
+-- 2. Publisher Table
+-- Stores publisher information and founding details
+CREATE TABLE publisher (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    founding_date DATE,
+    image VARCHAR(1000) DEFAULT 'https://ds.rokomari.store/rokomari110/company/publisher.png'
+);
+
+-- 3. Voucher Table
+-- Discount vouchers with percentage-based discounts and caps
+CREATE TABLE voucher (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    discount NUMERIC NOT NULL,
+    validity DATE,
+    cap NUMERIC DEFAULT 250
+);
+
+-- 4. Application User Table
+-- Customer accounts with profile information
+CREATE TABLE app_user (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(1024) NOT NULL,
+    address VARCHAR(1000),
+    phone VARCHAR(20),
+    dob VARCHAR(20),
+    image VARCHAR(1000) DEFAULT '/images/no-profile-picture.jpg',
+    cart_id INTEGER  -- Will be linked after cart table creation
+);
+
+-- 5. Cart Table
+-- Shopping carts for users
+CREATE TABLE cart (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    created_at DATE DEFAULT CURRENT_DATE,
+    CONSTRAINT cart_user_fk FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE
+);
+
+-- Add foreign key for cart_id in app_user (after cart creation)
+ALTER TABLE app_user
+ADD CONSTRAINT app_user_cart_id_fk FOREIGN KEY (cart_id) REFERENCES cart(id) ON DELETE CASCADE;
+
+-- 6. Book Table
+-- Central book catalog with comprehensive information
+CREATE TABLE book (
+    id SERIAL PRIMARY KEY,
+    author_id INTEGER,
+    publisher_id INTEGER,
+    name VARCHAR(100),
+    image VARCHAR(1000) DEFAULT '/images/books/defaultbook.jpg',
+    isbn VARCHAR(100),
+    page NUMERIC,
+    edition VARCHAR(100),
+    publishing_year NUMERIC,
+    price NUMERIC,
+    stock NUMERIC,
+    language VARCHAR(20),
+    genre VARCHAR(512),
+    summary VARCHAR(3000),
+    star NUMERIC DEFAULT 0,
+    review_count NUMERIC DEFAULT 0,
+    CONSTRAINT book_author_fk FOREIGN KEY (author_id) REFERENCES author(id) ON DELETE CASCADE,
+    CONSTRAINT book_publisher_fk FOREIGN KEY (publisher_id) REFERENCES publisher(id) ON DELETE CASCADE
+);
+
+-- ========================================
+-- TRANSACTION TABLES
+-- ========================================
+
+-- 7. Book Order Table
+-- Customer orders with shipping and payment information
+CREATE TABLE book_order (
+    id SERIAL PRIMARY KEY,
+    cart_id INTEGER,
+    voucher_id INTEGER,
+    name VARCHAR(100) NOT NULL,
+    phone1 VARCHAR(20) NOT NULL,
+    phone2 VARCHAR(20),
+    address VARCHAR(1000),
+    pick INTEGER DEFAULT 1 NOT NULL,  -- Pickup location/method
+    total_price NUMERIC,
+    total_item NUMERIC,
+    state VARCHAR(50),  -- Order status (1-7)
+    payment_method VARCHAR(50),
+    created_at TIMESTAMP DEFAULT NOW(),
+    user_order_number INTEGER,  -- Sequential order number per user
+    CONSTRAINT order_cart_fk FOREIGN KEY (cart_id) REFERENCES cart(id) ON DELETE CASCADE,
+    CONSTRAINT order_voucher_fk FOREIGN KEY (voucher_id) REFERENCES voucher(id) ON DELETE SET NULL
+);
+
+-- 8. Picked Table (Cart-Book Relationship)
+-- Items in shopping carts with quantities
+CREATE TABLE picked (
+    id SERIAL PRIMARY KEY,
+    cart_id INTEGER,
+    book_id INTEGER,
+    created_at DATE DEFAULT CURRENT_DATE,
+    amount INTEGER DEFAULT 1 CHECK (amount BETWEEN 1 AND 5),
+    CONSTRAINT picked_cart_fk FOREIGN KEY (cart_id) REFERENCES cart(id) ON DELETE CASCADE,
+    CONSTRAINT picked_book_fk FOREIGN KEY (book_id) REFERENCES book(id) ON DELETE CASCADE
+);
+
+-- ========================================
+-- RELATIONSHIP TABLES
+-- ========================================
+
+-- 9. Rates Table
+-- Book reviews and ratings by verified purchasers
+CREATE TABLE rates (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    book_id INTEGER,
+    stars NUMERIC,
+    review VARCHAR(1000),
+    created_at DATE DEFAULT CURRENT_DATE,
+    CONSTRAINT rates_user_fk FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE,
+    CONSTRAINT rates_book_fk FOREIGN KEY (book_id) REFERENCES book(id) ON DELETE CASCADE
+);
+
+-- 10. Wish List Table
+-- User wishlists for favorite books
+CREATE TABLE wish_list (
+    user_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
+    PRIMARY KEY (user_id, book_id),
+    CONSTRAINT wish_list_user_fk FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE,
+    CONSTRAINT wish_list_book_fk FOREIGN KEY (book_id) REFERENCES book(id) ON DELETE CASCADE
+);
+
+-- ========================================
+-- NOTIFICATION SYSTEM TABLES
+-- ========================================
+
+-- 11. Notifications Table
+-- System notifications for users
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type VARCHAR(50) DEFAULT 'general', -- 'voucher', 'general', 'welcome', 'order'
+    voucher_id INTEGER NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT notification_user_fk FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE,
+    CONSTRAINT notification_voucher_fk FOREIGN KEY (voucher_id) REFERENCES voucher(id) ON DELETE SET NULL
+);
+
+-- 12. User Vouchers Table
+-- Track which vouchers are assigned to which users
+CREATE TABLE user_vouchers (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    voucher_id INTEGER NOT NULL,
+    is_used BOOLEAN DEFAULT FALSE,
+    used_in_order_id INTEGER NULL,
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    used_at TIMESTAMP NULL,
+    CONSTRAINT user_voucher_user_fk FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE,
+    CONSTRAINT user_voucher_voucher_fk FOREIGN KEY (voucher_id) REFERENCES voucher(id) ON DELETE CASCADE,
+    CONSTRAINT user_voucher_order_fk FOREIGN KEY (used_in_order_id) REFERENCES book_order(id) ON DELETE SET NULL,
+    UNIQUE(user_id, voucher_id) -- Prevent duplicate voucher assignments
+);
+
+-- 13. User Metadata Table
+-- Track first-time buyers and user statistics
+CREATE TABLE user_metadata (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL UNIQUE,
+    first_order_at TIMESTAMP NULL,
+    total_orders INTEGER DEFAULT 0,
+    total_spent NUMERIC DEFAULT 0,
+    welcome_voucher_sent BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT user_metadata_user_fk FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE
+);
+
+-- ========================================
+-- DATA INTEGRITY CONSTRAINTS
+-- ========================================
+
+-- Prevent negative stock values
+ALTER TABLE book 
+ADD CONSTRAINT check_positive_stock 
+CHECK (stock >= 0);
+
+-- Prevent negative order amounts
+ALTER TABLE picked 
+ADD CONSTRAINT check_positive_amount 
+CHECK (amount > 0);
+
+-- Ensure valid order states (1-7)
+ALTER TABLE book_order 
+ADD CONSTRAINT check_valid_order_state 
+CHECK (state::INTEGER >= 1 AND state::INTEGER <= 7);
+
+-- Ensure valid ratings (1-5 stars)
+ALTER TABLE rates 
+ADD CONSTRAINT check_valid_rating 
+CHECK (stars >= 1 AND stars <= 5);
+
+-- ========================================
+-- INDEXES FOR PERFORMANCE OPTIMIZATION
+-- ========================================
+
+-- Book search optimization
+CREATE INDEX idx_book_genre ON book(genre);
+CREATE INDEX idx_book_author ON book(author_id);
+CREATE INDEX idx_book_publisher ON book(publisher_id);
+CREATE INDEX idx_book_price ON book(price);
+CREATE INDEX idx_book_stock ON book(stock);
+CREATE INDEX idx_book_star ON book(star);
+
+-- User operations optimization
+CREATE INDEX idx_user_email ON app_user(email);
+CREATE INDEX idx_cart_user ON cart(user_id);
+
+-- Order processing optimization
+CREATE INDEX idx_order_state ON book_order(state);
+CREATE INDEX idx_order_user ON book_order(cart_id);
+CREATE INDEX idx_order_created ON book_order(created_at);
+
+-- Cart operations optimization
+CREATE INDEX idx_picked_cart ON picked(cart_id);
+CREATE INDEX idx_picked_book ON picked(book_id);
+
+-- Review system optimization
+CREATE INDEX idx_rates_book ON rates(book_id);
+CREATE INDEX idx_rates_user ON rates(user_id);
+
+-- Wishlist optimization
+CREATE INDEX idx_wishlist_user ON wish_list(user_id);
+CREATE INDEX idx_wishlist_book ON wish_list(book_id);
+
+-- Notification system optimization
+CREATE INDEX idx_notifications_user_id ON notifications(user_id);
+CREATE INDEX idx_notifications_is_read ON notifications(is_read);
+CREATE INDEX idx_notifications_type ON notifications(type);
+
+-- User vouchers optimization
+CREATE INDEX idx_user_vouchers_user_id ON user_vouchers(user_id);
+CREATE INDEX idx_user_vouchers_is_used ON user_vouchers(is_used);
+CREATE INDEX idx_user_vouchers_voucher_id ON user_vouchers(voucher_id);
+
+-- User metadata optimization
+CREATE INDEX idx_user_metadata_user_id ON user_metadata(user_id);
+CREATE INDEX idx_user_metadata_welcome_voucher ON user_metadata(welcome_voucher_sent);
+
+-- ========================================
+-- STORED PROCEDURES
+-- ========================================
+
+-- Function to check stock availability for a cart
+CREATE OR REPLACE FUNCTION has_stock(cid INTEGER)
+RETURNS INTEGER AS $$
+DECLARE
+    bid INTEGER;
+    amnt INTEGER;
+    r RECORD;
+BEGIN
+    FOR r IN SELECT * FROM picked WHERE picked.cart_id = cid LOOP
+        bid := r.book_id;
+        SELECT stock INTO amnt FROM book WHERE id = bid FOR UPDATE;
+        IF r.amount > amnt THEN
+            RETURN 1;  -- Insufficient stock
+        END IF;
+    END LOOP;
+    RETURN 0;  -- Stock available
+END;
+$$ LANGUAGE plpgsql;
+
+-- Procedure to assign new cart to user
+CREATE OR REPLACE PROCEDURE assign_new_cart(uid INTEGER)
+LANGUAGE plpgsql AS $$
+DECLARE
+    cid INTEGER;
+BEGIN
+    INSERT INTO cart(user_id) VALUES (uid) RETURNING id INTO cid;
+    UPDATE app_user SET cart_id = cid WHERE id = uid;
+END;
+$$;
+
+-- Procedure to create order from cart
+CREATE OR REPLACE PROCEDURE create_order(
+    uid INTEGER,
+    vid INTEGER,
+    name_ TEXT,
+    phone1_ TEXT,
+    phone2_ TEXT,
+    address_ TEXT,
+    pick_ INTEGER
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+    cid              INTEGER;
+    price_value      NUMERIC;
+    item_count       INTEGER;
+    cap_value        NUMERIC;
+    discount_value   NUMERIC;
+    stocked_out      INTEGER;
+BEGIN
+    -- Get user's current cart
+    SELECT cart_id INTO cid FROM app_user WHERE id = uid;
+
+    -- Calculate total price
+    SELECT SUM(price * amount)
+    INTO price_value
+    FROM picked
+    JOIN book ON picked.book_id = book.id
+    WHERE cart_id = cid;
+
+    -- Calculate total items
+    SELECT SUM(amount)
+    INTO item_count
+    FROM picked
+    WHERE cart_id = cid;
+
+    IF item_count IS NULL OR item_count <= 0 THEN
+        RETURN;
+    END IF;
+
+    -- Check stock availability
+    stocked_out := has_stock(cid);
+    IF stocked_out = 1 THEN
+        RETURN;
+    END IF;
+
+    -- Apply voucher discount
+    IF vid IS NOT NULL THEN
+        SELECT discount INTO discount_value
+        FROM voucher
+        WHERE id = vid AND validity > NOW();
+
+        SELECT cap INTO cap_value
+        FROM voucher
+        WHERE id = vid AND validity > NOW();
+
+        price_value := price_value - LEAST(price_value * discount_value / 100, cap_value);
+        price_value := CEIL(price_value);
+    END IF;
+
+    -- Insert order with shipping cost
+    INSERT INTO book_order(cart_id, voucher_id, total_price, total_item, name, phone1, phone2, address, pick, state)
+    VALUES (cid, vid, price_value + 50, item_count, name_, phone1_, phone2_, address_, pick_, 1);
+
+    -- Assign new cart to user
+    CALL assign_new_cart(uid);
+END;
+$$;
+
+-- Procedure for book review (verified purchase required)
+CREATE OR REPLACE PROCEDURE review_book(
+    bid INTEGER,
+    uid INTEGER,
+    star INTEGER,
+    review_msg TEXT
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+    hasRated  INTEGER;
+    hasBought INTEGER;
+    istar     INTEGER;
+BEGIN
+    -- Check if user already rated this book
+    SELECT COUNT(*) INTO hasRated
+    FROM rates
+    WHERE user_id = uid AND book_id = bid;
+
+    -- Check if user has purchased this book
+    SELECT COUNT(*) INTO hasBought
+    FROM picked
+    JOIN cart ON cart.id = picked.cart_id AND cart.user_id = uid
+    JOIN book_order ON book_order.cart_id = cart.id AND book_order.state = '5'
+    WHERE book_id = bid;
+
+    istar := ROUND(star);
+
+    -- Allow review only if not already rated, has purchased, and valid rating
+    IF hasRated = 0 AND hasBought <> 0 AND star > 0 AND star <= 5 THEN
+        INSERT INTO rates(user_id, book_id, stars, review)
+        VALUES (uid, bid, istar, review_msg);
+        RAISE NOTICE 'Review added successfully';
+    ELSE
+        RAISE NOTICE 'Cannot add review: Invalid conditions';
+    END IF;
+END;
+$$;
+
+-- ========================================
+-- TRIGGER FUNCTIONS
+-- ========================================
+
+-- Function for adding new review (updates book rating)
+CREATE OR REPLACE FUNCTION fn_add_review()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Calculate and update the average rating
+    UPDATE book
+    SET star = (
+        SELECT ROUND(AVG(stars), 1)
+        FROM rates
+        WHERE book_id = NEW.book_id
+    ),
+    review_count = review_count + 1
+    WHERE id = NEW.book_id;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function for updating existing review
+CREATE OR REPLACE FUNCTION fn_update_review()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Recalculate the average rating
+    UPDATE book
+    SET star = (
+        SELECT ROUND(AVG(stars), 1)
+        FROM rates
+        WHERE book_id = NEW.book_id
+    )
+    WHERE id = NEW.book_id;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function for deleting review (recalculates average)
+CREATE OR REPLACE FUNCTION fn_delete_review()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Recalculate the average rating and review count
+    UPDATE book
+    SET star = COALESCE((
+        SELECT ROUND(AVG(stars), 1)
+        FROM rates
+        WHERE book_id = OLD.book_id
+    ), 0),
+    review_count = review_count - 1
+    WHERE id = OLD.book_id;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function for stock reduction when order is placed
+CREATE OR REPLACE FUNCTION fn_update_stock()
+RETURNS TRIGGER AS $$
+DECLARE
+    r RECORD;
+    current_stock INTEGER;
+    rows_affected INTEGER;
+BEGIN
+    FOR r IN SELECT * FROM picked WHERE cart_id = NEW.cart_id LOOP
+        -- Atomically update stock with validation
+        UPDATE book
+        SET stock = stock - r.amount
+        WHERE id = r.book_id AND stock >= r.amount;
+        
+        GET DIAGNOSTICS rows_affected = ROW_COUNT;
+        
+        -- Rollback if insufficient stock
+        IF rows_affected = 0 THEN
+            SELECT stock INTO current_stock FROM book WHERE id = r.book_id;
+            RAISE EXCEPTION 'Insufficient stock for book ID %. Required: %, Available: %', 
+                r.book_id, r.amount, current_stock;
+        END IF;
+    END LOOP;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ========================================
+-- TRIGGERS
+-- ========================================
+
+-- Trigger for adding reviews
+CREATE TRIGGER tg_add_review 
+AFTER INSERT ON rates
+FOR EACH ROW
+EXECUTE FUNCTION fn_add_review();
+
+-- Trigger for updating reviews
+CREATE TRIGGER tg_update_review 
+AFTER UPDATE OF stars ON rates
+FOR EACH ROW
+EXECUTE FUNCTION fn_update_review();
+
+-- Trigger for deleting reviews
+CREATE TRIGGER tg_delete_review 
+AFTER DELETE ON rates
+FOR EACH ROW
+EXECUTE FUNCTION fn_delete_review();
+
+-- Trigger for stock management
+CREATE TRIGGER tg_update_stock 
+AFTER INSERT ON book_order
+FOR EACH ROW
+EXECUTE FUNCTION fn_update_stock();
+
+-- ========================================
+-- INITIAL DATA SETUP
+-- ========================================
+
+-- Create carts for all existing users
+WITH new_carts AS (
+    INSERT INTO cart (user_id)
+    SELECT id FROM app_user
+    RETURNING id AS cart_id, user_id
+)
+UPDATE app_user
+SET cart_id = new_carts.cart_id
+FROM new_carts
+WHERE app_user.id = new_carts.user_id;
+
+-- Initialize user metadata for existing users
+INSERT INTO user_metadata (user_id, total_orders, total_spent, first_order_at, welcome_voucher_sent)
+SELECT 
+    u.id,
+    COALESCE(order_stats.order_count, 0),
+    COALESCE(order_stats.total_spent, 0),
+    order_stats.first_order,
+    TRUE -- Mark as true for existing users to avoid sending welcome vouchers to them
+FROM app_user u
+LEFT JOIN (
+    SELECT 
+        CASE 
+            WHEN bo.name = u.name THEN u.id
+            ELSE NULL
+        END as user_id,
+        COUNT(bo.id) as order_count,
+        SUM(CAST(bo.total_price AS NUMERIC)) as total_spent,
+        MIN(bo.created_at) as first_order
+    FROM book_order bo
+    LEFT JOIN app_user u ON u.name = bo.name
+    GROUP BY u.id, u.name
+) order_stats ON order_stats.user_id = u.id
+ON CONFLICT (user_id) DO NOTHING;
+
+-- ========================================
+-- SCHEMA SUMMARY
+-- ========================================
+/*
+MAIN ENTITIES:
+- app_user: Customer accounts and profiles
+- author: Book authors with authentication
+- publisher: Publishing companies
+- book: Central product catalog
+- voucher: Discount vouchers
+
+TRANSACTION ENTITIES:
+- cart: Shopping carts
+- picked: Cart items with quantities
+- book_order: Customer orders
+- rates: Book reviews and ratings
+- wish_list: User wishlists
+
+NOTIFICATION SYSTEM:
+- notifications: System notifications for users
+- user_vouchers: Voucher assignment tracking
+- user_metadata: User statistics and first-time buyer tracking
+
+FEATURES IMPLEMENTED:
+- Multi-user authentication system
+- Shopping cart and order management
+- Book rating and review system
+- Inventory management with stock tracking
+- Voucher/discount system with user assignment
+- Real-time notifications with multiple types
+- Welcome voucher system for first-time buyers
+- Advanced search and filtering
+- Transaction integrity with triggers
+- Performance optimization with indexes
+- User statistics and metadata tracking
+*/

@@ -1,0 +1,132 @@
+<div class="row gx-0 g-0 p-4 mx-auto" style="max-width: 1200px;">
+  <!-- Left: Carousel -->
+  <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+    <div class="card shadow border-0 rounded-4 overflow-hidden h-100">
+      <%- include('components/carousel2', {
+            carousalImages: [
+              '/images/loginCarousel1.png',
+              '/images/loginCarousel2.png',
+              '/images/loginCarousel3.png',
+              '/images/loginCarousel4.png',
+              '/images/loginCarousel5.png'
+            ]
+          })
+      %>
+    </div>
+  </div>
+
+  <!-- Right: Login Form -->
+  <div class="col-lg-6 col-md-12">
+    <div class="card shadow border-0 rounded-4 h-100">
+      <div class="card-body p-5">
+        <!-- Welcome Header -->
+        <div class="text-center mb-4">
+          <h2 class="fw-bold mb-2">Welcome Back!</h2>
+          <p class="text-muted">Sign in to continue your literary journey</p>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-pills justify-content-center mb-4 bg-light rounded-pill p-1">
+          <li class="nav-item flex-fill">
+            <a href="#" class="nav-link active text-center rounded-pill">Login</a>
+          </li>
+          <li class="nav-item flex-fill">
+            <a href="/signup" class="nav-link text-center rounded-pill">Sign Up</a>
+          </li>
+        </ul>
+
+        <form action="/login" method="POST" class="needs-validation" novalidate>
+          <!-- Email -->
+          <div class="form-floating mb-4">
+            <input
+              type="email"
+              class="form-control border-2 rounded-3"
+              id="floatingInput"
+              name="email"
+              required
+              value="<%= (form && form.email) ? form.email : '' %>"
+              placeholder="name@example.com"
+            >
+            <label for="floatingInput"><i class="bi bi-envelope me-2"></i>Email address</label>
+            <div class="invalid-feedback">
+              Please enter a valid email.
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-floating mb-4">
+            <input
+              type="password"
+              class="form-control border-2 rounded-3"
+              id="floatingPassword"
+          name="password"
+          required
+        >
+        <label for="floatingPassword">Password</label>
+        <div class="invalid-feedback">
+          Please enter your password.
+        </div>
+      </div>
+
+      <!-- Error messages -->
+      <% if (Array.isArray(errors) && errors.length) { %>
+        <div class="alert alert-danger">
+          <ul class="mb-0">
+            <% errors.forEach(e => { %>
+              <li><%= e %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+
+      <!-- Remember me & forgot -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value="true"
+            id="rememberme"
+            name="rememberme"
+          >
+          <label class="form-check-label" for="rememberme">
+            Remember Me
+          </label>
+        </div>
+        <a href="/forgot-password" class="link-secondary">Forgot Password?</a>
+      </div>
+
+      <!-- Submit -->
+      <div class="d-grid">
+        <button
+          type="submit"
+          class="btn btn-lg btn-success"
+        >Sign In</button>
+      </div>
+    </form>
+
+    <!-- Sign up link -->
+    <div class="text-center mt-3">
+      <p>
+        Don’t have an account?
+        <a href="/signup"><strong>Sign Up Now!</strong></a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Bootstrap 5 client-side validation
+(() => {
+  'use strict'
+  document.querySelectorAll('.needs-validation').forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      form.classList.add('was-validated')
+    }, false)
+  })
+})();
+</script>

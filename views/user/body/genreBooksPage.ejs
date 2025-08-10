@@ -1,0 +1,194 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/genres">Genres</a></li>
+        <li class="breadcrumb-item active"><%= currentGenre %></li>
+    </ol>
+</nav>
+
+<style>
+.book-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.book-card img {
+    transition: transform 0.3s ease;
+}
+
+.book-card:hover img {
+    transform: scale(1.05);
+}
+
+.filter-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.price-input {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 8px 12px;
+    transition: border-color 0.3s ease;
+}
+
+.price-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.filter-btn {
+    background: linear-gradient(135deg, #edcd2f 0%, #edcd2f 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: linear-gradient(135deg, #ede04e 0%, #e9df6d 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px #ede04e(0,123,255,0.3);
+}
+
+.clear-btn {
+    background: linear-gradient(135deg, #669ec4 0%, #669ec4 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+    background: linear-gradient(135deg, #479bd3 0%, #2e8ece 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px #669ec4(108,117,125,0.3);
+}
+
+.sort-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 8px 12px;
+    transition: border-color 0.3s ease;
+}
+
+.sort-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+</style>
+
+<!-- Genre Header -->
+<div class="filter-section text-center">
+    <h1 class="mb-2">
+        <i class="bi bi-tags me-2"></i><%= currentGenre %>
+    </h1>
+    <p class="mb-0 text-muted">Discover amazing books in this genre</p>
+</div>
+
+<!-- Filter and Sort Section -->
+<div class="filter-section">
+    <form id="filterForm" method="GET" action="/genres/search">
+        <input type="hidden" name="genre" value="<%= currentGenre %>">
+        <div class="row align-items-end">
+            <div class="col-md-3">
+                <label for="sortBy" class="form-label fw-bold text-dark">
+                    <i class="bi bi-sort-down me-1"></i>Sort by Price
+                </label>
+                <select class="form-select sort-select" id="sortBy" name="sortBy">
+                    <option value="price_low" <%= currentSort === 'price_low' ? 'selected' : '' %>>Price (Low to High)</option>
+                    <option value="price_high" <%= currentSort === 'price_high' ? 'selected' : '' %>>Price (High to Low)</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="minPrice" class="form-label fw-bold text-dark">
+                    <i class="bi bi-currency-dollar me-1"></i>Min Price (৳)
+                </label>
+                <input type="number" class="form-control price-input" id="minPrice" name="minPrice" 
+                       placeholder="0" min="0" step="1" value="<%= currentMinPrice || '' %>">
+            </div>
+            <div class="col-md-3">
+                <label for="maxPrice" class="form-label fw-bold text-dark">
+                    <i class="bi bi-currency-dollar me-1"></i>Max Price (৳)
+                </label>
+                <input type="number" class="form-control price-input" id="maxPrice" name="maxPrice" 
+                       placeholder="10000" min="0" step="1" value="<%= currentMaxPrice || '' %>">
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn filter-btn flex-fill">
+                        <i class="bi bi-funnel-fill me-1"></i>Filter
+                    </button>
+                    <a href="/genres/search?genre=<%= encodeURIComponent(currentGenre) %>" class="btn clear-btn">
+                        <i class="bi bi-x-circle me-1"></i>Clear
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<% if (books.length > 0) { %>
+    <h6>(Showing <%=start+1%> to <%=start+books.length%> of <%=cnt%> books in <%= currentGenre %>)</h6>
+    
+    <div class="d-flex flex-wrap justify-content-evenly">
+        <% for(let i = 0; i < books.length; i++){ %>
+            <div class="card book-card mb-1 m-1" style="width: 12rem;">
+                <img class="card-img-top p-3" src="<%= books[i].image %>" alt="<%= books[i].name %>">
+                <div class="card-body" style="display: flex;flex-direction: column;justify-content:space-between;">
+                    <p style="color: #266dd3;font-weight: 650; font-size: 18px;" class="card-title"><%= books[i].name %></p>
+                    <div>
+                        <span class="ml-0">
+                            <% if(books[i].review_count && books[i].review_count > 0){ %>
+                                <% for(let stars = 0; stars < Math.round(parseFloat(books[i].star)); stars++){ %>
+                                    ⭐
+                                <% } %>
+                                <small class="text-muted">(<%= books[i].review_count %>)</small>
+                            <% }else{ %>
+                                <small class="text-muted">No Reviews yet</small>
+                            <% } %>
+                        </span>
+                        <p class="card-text">Price: Tk. <%= books[i].price %></p>
+                        <div class="d-grid gap-2">
+                            <a href="/books/<%= books[i].id %>" class="btn btn-warning">
+                                <i class="bi bi-book-half"></i>
+                                VIEW BOOK
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+    
+    <div style="margin: auto" id="paginationDiv" data-pages="<%=pages%>" data-page="<%=page%>"
+         data-href="<%=target%>" data-query="<%=queryString%>"></div>
+    <script async src="/scripts/pagination.js"></script>
+<% } else { %>
+    <!-- No Books Found -->
+    <div class="text-center py-5">
+        <i class="bi bi-book display-1 text-muted mb-3"></i>
+        <h3 class="text-muted">No books found in "<%= currentGenre %>"</h3>
+        <p class="text-muted mb-4">Try adjusting your filters or explore other genres</p>
+        <div class="d-flex gap-2 justify-content-center">
+            <a href="/genres/search?genre=<%= encodeURIComponent(currentGenre) %>" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Clear Filters
+            </a>
+            <a href="/genres" class="btn btn-primary">
+                <i class="bi bi-arrow-left me-1"></i>Browse All Genres
+            </a>
+        </div>
+    </div>
+<% } %>

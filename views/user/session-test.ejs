@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Session Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .session-info { background: #f0f0f0; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .user-info { color: green; font-weight: bold; }
+        .no-user { color: red; }
+        .session-switcher { background: #e8f4fd; padding: 15px; margin: 15px 0; border-radius: 8px; }
+        .session-btn { margin: 5px; padding: 8px 12px; border: 1px solid #007bff; background: white; cursor: pointer; border-radius: 4px; }
+        .session-btn.active { background: #007bff; color: white; }
+        .session-btn:hover { background: #e3f2fd; }
+    </style>
+</head>
+<body>
+    <h1>Multi-User Session Test</h1>
+    
+    <div class="session-info">
+        <h3>Current Session Status:</h3>
+        <% if (user) { %>
+            <p class="user-info">✅ Logged in as: <%= user.name %> (<%= user.email %>)</p>
+            <p>Session ID: <%= user.sessionId %></p>
+            <form action="/logout" method="post" style="display: inline;">
+                <button type="submit">Logout Current Session</button>
+            </form>
+        <% } else { %>
+            <p class="no-user">❌ Not logged in</p>
+            <a href="/login">Login here</a>
+        <% } %>
+    </div>
+
+    <% if (typeof availableSessions !== 'undefined' && availableSessions && availableSessions.length > 1) { %>
+    <div class="session-switcher">
+        <h3>Available Sessions (Switch User):</h3>
+        <p>You have multiple users logged in. Click to switch:</p>
+        <% availableSessions.forEach(function(session) { %>
+            <button class="session-btn <%= session.sessionId === user.sessionId ? 'active' : '' %>" 
+                    onclick="switchSession('<%= session.sessionId %>')">
+                <%= session.user.name %> (<%= session.user.email %>)
+            </button>
+        <% }); %>
+    </div>
+    <% } %>
+
+    <div>
+        <h3>Testing Instructions:</h3>
+        <ol>
+            <li>Open this page in two different tabs</li>
+            <li>In tab 1: Login as miku@gmail.com (password: 123456)</li>
+            <li>In tab 2: Login as eren@gmail.com (password: 123456)</li>
+            <li>Refresh both tabs - each should show the correct user</li>
+            <li>Use the "Switch User" buttons to change sessions</li>
+            <li>Both sessions should remain independent!</li>
+        </ol>
+    </div>
+
+    <div>
+        <h3>Available Test Users:</h3>
+        <ul>
+            <li><strong>miku@gmail.com</strong> - Password: 123456</li>
+            <li><strong>eren@gmail.com</strong> - Password: 123456</li>
+        </ul>
+    </div>
+
+    <script>
+        function switchSession(sessionId) {
+            // Set the preferred session cookie
+            document.cookie = `currentSession=${sessionId}; path=/; max-age=86400; SameSite=Lax`;
+            // Reload to apply the new session
+            window.location.reload();
+        }
+
+        // Debug information
+        <% if (typeof availableSessions !== 'undefined' && availableSessions) { %>
+        console.log('Available sessions:', <%- JSON.stringify(availableSessions) %>);
+        <% } %>
+        <% if (user) { %>
+        console.log('Current user:', <%- JSON.stringify(user) %>);
+        <% } %>
+    </script>
+
+</body>
+</html>

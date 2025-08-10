@@ -1,0 +1,312 @@
+
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <h3 class="card-title" style="color: #8B4513;">
+                        <i class="bi bi-plus-circle me-2"></i>Add New Book
+                    </h3>
+                    
+                    <!-- Success/Error Messages -->
+                    <% if (typeof success !== 'undefined' && success) { %>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle me-2"></i><%= success %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+                    
+                    <% if (typeof error !== 'undefined' && error) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i><%= error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form action="/admin/book/add" method="post">
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-info-circle me-2"></i>Main Information
+                        </h4>
+                        <div class="mb-3">
+                            <label for="nameInput" class="form-label fw-semibold">Book Name *</label>
+                            <input type="text" name="name" class="form-control" id="nameInput" 
+                                   placeholder="Enter the book name..." required>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="authorSelect" class="form-label fw-semibold">Author *</label>
+                                <div class="d-flex gap-2 align-items-end">
+                                    <div class="flex-grow-1">
+                                        <select class="form-select" name="author_id" id="authorSelect">
+                                            <option value="">Choose an author...</option>
+                                            <option value="new">+ Add New Author</option>
+                                            <% for(let i = 0; i < authors.length; i++){ %>
+                                                <option value="<%=authors[i].id%>"><%=authors[i].name%></option>
+                                            <% } %>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- New Author Fields (Hidden by default) -->
+                                <div id="newAuthorFields" style="display: none;" class="mt-3 p-3 border rounded bg-light">
+                                    <h6 class="text-primary"><i class="bi bi-person-plus me-2"></i>Add New Author</h6>
+                                    <div class="mb-2">
+                                        <label for="newAuthorName" class="form-label fw-semibold">Author Name *</label>
+                                        <input type="text" name="new_author_name" class="form-control" id="newAuthorName" placeholder="Enter author name...">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="newAuthorImage" class="form-label fw-semibold">Author Image URL</label>
+                                        <input type="url" name="new_author_image" class="form-control" id="newAuthorImage" placeholder="Enter author image URL...">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="newAuthorDescription" class="form-label fw-semibold">Author Description</label>
+                                        <textarea name="new_author_description" class="form-control" id="newAuthorDescription" rows="3" placeholder="Enter author description..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="publisherSelect" class="form-label fw-semibold">Publisher *</label>
+                                <div class="d-flex gap-2 align-items-end">
+                                    <div class="flex-grow-1">
+                                        <select class="form-select" name="publisher_id" id="publisherSelect">
+                                            <option value="">Choose a publisher...</option>
+                                            <option value="new">+ Add New Publisher</option>
+                                            <% for(let i = 0; i < publishers.length; i++){ %>
+                                                <option value="<%=publishers[i].id%>"><%=publishers[i].name%></option>
+                                            <% } %>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- New Publisher Fields (Hidden by default) -->
+                                <div id="newPublisherFields" style="display: none;" class="mt-3 p-3 border rounded bg-light">
+                                    <h6 class="text-primary"><i class="bi bi-building-add me-2"></i>Add New Publisher</h6>
+                                    <div class="mb-2">
+                                        <label for="newPublisherName" class="form-label fw-semibold">Publisher Name *</label>
+                                        <input type="text" name="new_publisher_name" class="form-control" id="newPublisherName" placeholder="Enter publisher name...">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="newPublisherImage" class="form-label fw-semibold">Publisher Image URL</label>
+                                        <input type="url" name="new_publisher_image" class="form-control" id="newPublisherImage" placeholder="Enter publisher image URL...">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="newPublisherFoundingDate" class="form-label fw-semibold">Founding Date</label>
+                                        <input type="date" name="new_publisher_founding_date" class="form-control" id="newPublisherFoundingDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-image me-2"></i>Book Image
+                        </h4>
+                        <div class="mb-3">
+                            <label for="imageInput" class="form-label fw-semibold">Image URL</label>
+                            <input type="url" name="image" class="form-control" id="imageInput" 
+                                   placeholder="Enter the book image URL...">
+                            <div class="form-text">Leave blank to use default book image</div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-gear me-2"></i>Book Details
+                        </h4>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="languageInput" class="form-label fw-semibold">Language *</label>
+                                <select class="form-select" name="language" id="languageInput" required>
+                                    <option value="">Choose language...</option>
+                                    <option value="Bangla">Bangla</option>
+                                    <option value="English">English</option>
+                                    <option value="Hindi">Hindi</option>
+                                    <option value="Arabic">Arabic</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="isbnInput" class="form-label fw-semibold">ISBN *</label>
+                                <input type="text" name="isbn" class="form-control" id="isbnInput" 
+                                       placeholder="Enter the book ISBN..." required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="pageInput" class="form-label fw-semibold">Number of Pages</label>
+                                <input type="number" name="page" class="form-control" id="pageInput" 
+                                       placeholder="Enter page count..." min="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="yearInput" class="form-label fw-semibold">Publishing Year</label>
+                                <input type="number" name="year" class="form-control" id="yearInput" 
+                                       placeholder="Enter year..." min="1800" max="2030">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editionInput" class="form-label fw-semibold">Edition</label>
+                                <input type="text" name="edition" class="form-control" id="editionInput" 
+                                       placeholder="e.g., 1st Edition, 2020">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="priceInput" class="form-label fw-semibold">Price (৳) *</label>
+                                <input type="number" name="price" class="form-control" id="priceInput" 
+                                       placeholder="Enter price..." min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="stockInput" class="form-label fw-semibold">Stock Quantity *</label>
+                                <input type="number" name="stock" class="form-control" id="stockInput" 
+                                       value="100" min="0" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="genreInput" class="form-label fw-semibold">Genre *</label>
+                                <div class="input-group">
+                                    <input type="text" name="genre" class="form-control" id="genreInput" 
+                                           placeholder="e.g., Fiction, Science, History..." required>
+                                    <button type="button" class="btn btn-outline-secondary" id="genreHelpBtn" 
+                                            data-bs-toggle="tooltip" data-bs-placement="top" 
+                                            title="Enter multiple genres separated by commas">
+                                        <i class="bi bi-question-circle"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    <small>Separate multiple genres with commas (e.g., "Fiction, Romance, Drama")</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <!-- Summary Section -->
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-card-text me-2"></i>Book Summary
+                        </h4>
+                        <div class="mb-3">
+                            <label for="summaryInput" class="form-label fw-semibold">Book Summary</label>
+                            <textarea name="summary" class="form-control" id="summaryInput" rows="4" 
+                                      placeholder="Enter a brief summary of the book..."></textarea>
+                            <div class="form-text">Optional but recommended for better book presentation</div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn text-white" type="submit" style="background-color: #228B22;">
+                                <i class="bi bi-plus-lg me-1"></i>Add Book
+                            </button>
+                            <a class="btn btn-secondary" href="/admin/book">
+                                <i class="bi bi-x-lg me-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle Author Selection
+    const authorSelect = document.getElementById('authorSelect');
+    const newAuthorFields = document.getElementById('newAuthorFields');
+    const newAuthorName = document.getElementById('newAuthorName');
+    
+    authorSelect.addEventListener('change', function() {
+        if (this.value === 'new') {
+            newAuthorFields.style.display = 'block';
+            newAuthorName.required = true;
+            // Remove required from author select since we're adding a new one
+            authorSelect.required = false;
+        } else {
+            newAuthorFields.style.display = 'none';
+            newAuthorName.required = false;
+            authorSelect.required = true;
+        }
+    });
+    
+    // Handle Publisher Selection
+    const publisherSelect = document.getElementById('publisherSelect');
+    const newPublisherFields = document.getElementById('newPublisherFields');
+    const newPublisherName = document.getElementById('newPublisherName');
+    
+    publisherSelect.addEventListener('change', function() {
+        if (this.value === 'new') {
+            newPublisherFields.style.display = 'block';
+            newPublisherName.required = true;
+            // Remove required from publisher select since we're adding a new one
+            publisherSelect.required = false;
+        } else {
+            newPublisherFields.style.display = 'none';
+            newPublisherName.required = false;
+            publisherSelect.required = true;
+        }
+    });
+    
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Form validation before submit
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const authorSelected = authorSelect.value && authorSelect.value !== 'new';
+        const newAuthorProvided = authorSelect.value === 'new' && newAuthorName.value.trim();
+        
+        const publisherSelected = publisherSelect.value && publisherSelect.value !== 'new';
+        const newPublisherProvided = publisherSelect.value === 'new' && newPublisherName.value.trim();
+        
+        if (!authorSelected && !newAuthorProvided) {
+            e.preventDefault();
+            alert('Please select an existing author or provide new author details.');
+            return false;
+        }
+        
+        if (!publisherSelected && !newPublisherProvided) {
+            e.preventDefault();
+            alert('Please select an existing publisher or provide new publisher details.');
+            return false;
+        }
+    });
+});
+</script>

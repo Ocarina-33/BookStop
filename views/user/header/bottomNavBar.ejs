@@ -1,0 +1,108 @@
+<% if (navbar === undefined) {var navbar = 0;} %>
+<nav class="navbar bottom-navbar navbar-expand-lg navbar-dark mb-1">
+    <div class="container-fluid">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown"
+                aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+            <ul class="navbar-nav nav-tabs border-0 w-100 justify-content-center">
+                <li class="nav-item">
+                    <% if(navbar === 0){ %>
+                        <a class="nav-link active fw-semibold px-4" href="/">
+                            <i class="bi bi-house-door me-2"></i>Home
+                        </a>
+                    <% }else{ %>
+                        <a class="nav-link fw-semibold px-4" href="/">
+                            <i class="bi bi-house-door me-2"></i>Home
+                        </a>
+                    <% } %>
+                </li>
+                <li class="nav-item">
+                    <% if(navbar === 1){ %>
+                        <a class="nav-link active fw-semibold px-4" href="/books">
+                            <i class="bi bi-book me-2"></i>Books
+                        </a>
+                    <% }else{ %>
+                        <a class="nav-link fw-semibold px-4" href="/books">
+                            <i class="bi bi-book me-2"></i>Books
+                        </a>
+                    <% } %>
+                </li>
+                <li class="nav-item">
+                    <% if(navbar === 2){ %>
+                        <a class="nav-link active fw-semibold px-4" href="/authors">
+                            <i class="bi bi-pen me-2"></i>Writers
+                        </a>
+                    <% }else{ %>
+                        <a class="nav-link fw-semibold px-4" href="/authors">
+                            <i class="bi bi-pen me-2"></i>Writers
+                        </a>
+                    <% } %>
+                </li>
+                <li class="nav-item">
+                    <% if(navbar === 3){ %>
+                        <a class="nav-link active fw-semibold px-4" href="/publishers">
+                            <i class="bi bi-building me-2"></i>Publishers
+                        </a>
+                    <% }else{ %>
+                        <a class="nav-link fw-semibold px-4" href="/publishers">
+                            <i class="bi bi-building me-2"></i>Publishers
+                        </a>
+                    <% } %>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fw-semibold px-4 <%= navbar === 5 ? 'active' : '' %>" href="#" 
+                       id="genreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-tags me-2"></i>Genres
+                    </a>
+                    <ul class="dropdown-menu bg-white" aria-labelledby="genreDropdown">
+                        <li><a class="dropdown-item text-dark" href="/genres">
+                            <i class="bi bi-grid-3x3-gap me-2"></i>All Genres
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <% if (typeof topGenres !== 'undefined' && topGenres.length > 0) { %>
+                            <% topGenres.forEach((genre, index) => { %>
+                                <li><a class="dropdown-item text-dark" href="/genres/search?genre=<%= encodeURIComponent(genre.genre) %>">
+                                    <i class="bi bi-book me-2"></i><%= genre.genre %>
+                                    <span class="badge bg-secondary ms-2"><%= genre.book_count %></span>
+                                </a></li>
+                            <% }); %>
+                        <% } else { %>
+                            <li><a class="dropdown-item text-dark" href="/genres/search?genre=Fiction">
+                                <i class="bi bi-book me-2"></i>Fiction
+                            </a></li>
+                            <li><a class="dropdown-item text-dark" href="/genres/search?genre=উপন্যাস">
+                                <i class="bi bi-journal-text me-2"></i>উপন্যাস
+                            </a></li>
+                            <li><a class="dropdown-item text-dark" href="/genres/search?genre=কবিতা">
+                                <i class="bi bi-pen me-2"></i>কবিতা
+                            </a></li>
+                            <li><a class="dropdown-item text-dark" href="/genres/search?genre=গল্প সমগ্র">
+                                <i class="bi bi-journal-bookmark me-2"></i>গল্প সমগ্র
+                            </a></li>
+                            <li><a class="dropdown-item text-dark" href="/genres/search?genre=শিশু-কিশোর">
+                                <i class="bi bi-emoji-smile me-2"></i>শিশু-কিশোর
+                            </a></li>
+                        <% } %>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-dark" href="/genres">
+                            <i class="bi bi-arrow-right me-2"></i>View All Genres
+                        </a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <% if(navbar === 4){ %>
+                        <a class="nav-link active fw-semibold px-4" href="/aboutus">
+                            <i class="bi bi-info-circle me-2"></i>About Us
+                        </a>
+                    <% }else{ %>
+                        <a class="nav-link fw-semibold px-4" href="/aboutus">
+                            <i class="bi bi-info-circle me-2"></i>About Us
+                        </a>
+                    <% } %>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

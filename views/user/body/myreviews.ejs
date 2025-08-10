@@ -1,0 +1,253 @@
+<div class="row">
+    <div class="col-lg-3 col-md-4">
+        <!-- User Profile Card -->
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-4">
+                        <img class="circular shadow-sm" src="<%= user && user.image ? user.image : '/images/propic.jpg' %>" width="60" height="60" alt="Profile Picture">
+                    </div>
+                    <div class="col-8">
+                        <p class="text-muted mb-1">Welcome back,</p>
+                        <h5 class="mb-0 fw-bold"><%= user ? user.name : 'Guest' %></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Menu -->
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="/My-section/profile" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-person-circle me-3"></i>My Account
+                    </a>
+                    <a href="/My-section/orders" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-bag-check me-3"></i>My Orders
+                    </a>
+                    <a href="/My-section/wishlist" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-heart me-3"></i>My Wishlist
+                    </a>
+                    <a href="/My-section/reviews" class="list-group-item list-group-item-action active border-0 fw-semibold">
+                        <i class="bi bi-star me-3"></i>My Reviews
+                    </a>
+                    <a href="/my-section/notifications" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-bell me-3"></i>Notifications
+                                  <% if (unreadCount > 0) { %>
+                                <span class="badge bg-danger rounded-pill float-end"><%= unreadCount %></span>
+                            <% } %>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-9 col-md-8">
+        <!-- Header Section -->
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-star-fill text-warning me-3 fs-4"></i>
+                    <h3 class="mb-0">My Reviews</h3>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reviews Content -->
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body p-0">
+                <!-- Modern Tab Navigation -->
+                <ul class="nav nav-pills nav-fill m-3 bg-light rounded-pill p-1">
+                    <li class="nav-item">
+                        <a href="#reviewed" class="nav-link active rounded-pill fw-semibold" data-bs-toggle="tab">
+                            <i class="bi bi-star-fill me-2"></i>Reviewed Books
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#unreviewed" class="nav-link rounded-pill fw-semibold" data-bs-toggle="tab">
+                            <i class="bi bi-star me-2"></i>Pending Reviews
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="tab-content px-3 pb-3">
+                    <!-- Reviewed Books Tab -->
+                    <div class="tab-pane fade show active" id="reviewed">
+                        <% if(!books || books.length === 0) { %>
+                            <div class="text-center py-5">
+                                <i class="bi bi-star display-1 text-muted mb-3"></i>
+                                <h4 class="text-muted">No reviews yet</h4>
+                                <p class="text-muted">You haven't reviewed any books yet. Start sharing your thoughts!</p>
+                                <a href="/books" class="btn btn-primary rounded-pill px-4">
+                                    <i class="bi bi-book me-2"></i>Browse Books
+                                </a>
+                            </div>
+                        <% } else { %>
+                            <% for(let i = 0; i < books.length; i++){ %>
+                                <div class="card border-0 mb-3 review-card">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-3 col-sm-4 text-center">
+                                                <img src="<%= books[i].image || books[i].IMAGE || '/images/books/defaultbook.jpg' %>" class="img-fluid rounded shadow-sm" style="max-width: 120px; height: auto;" alt="<%= books[i].name || books[i].BOOK_NAME || 'Book' %>">
+                                            </div>
+                                            <div class="col-md-9 col-sm-8">
+                                                <a href="<%= "/books/"+(books[i].id || books[i].BOOK_ID) %>" class="text-decoration-none">
+                                                    <h5 class="card-title text-primary mb-2"><%= books[i].name || books[i].BOOK_NAME %></h5>
+                                                </a>
+                                                <p class="text-muted mb-2">by <span class="fw-semibold"><%= books[i].author_name || books[i].AUTHOR_NAME %></span></p>
+                                                
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <div class="rating-stars me-2">
+                                                        <% let rating = books[i].stars || books[i].RATING || 0; %>
+                                                        <% for(let j = 0; j < 5; j++){ %>
+                                                            <i class="bi bi-star<% if(j < rating) { %>-fill text-warning<% } else { %> text-muted<% } %>"></i>
+                                                        <% } %>
+                                                    </div>
+                                                    <span class="badge bg-warning text-dark rounded-pill">
+                                                        <%= rating %>/5
+                                                    </span>
+                                                </div>
+                                                
+                                                <% if((books[i].description || books[i].review) && (books[i].description || books[i].review).trim() !== '') { %>
+                                                    <div class="review-text">
+                                                        <p class="text-muted mb-2">
+                                                            <i class="bi bi-quote text-primary"></i>
+                                                            "<%= books[i].description || books[i].review %>"
+                                                        </p>
+                                                    </div>
+                                                <% } %>
+                                                
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-calendar3 me-1"></i>
+                                                        Reviewed on <%= new Date(books[i].review_date || books[i].REVIEW_DATE || Date.now()).toLocaleDateString() %>
+                                                    </small>
+                                                    <div>
+                                                        <a href="<%= "/books/"+(books[i].id || books[i].BOOK_ID) %>" class="btn btn-outline-primary btn-sm rounded-pill me-2">
+                                                            <i class="bi bi-eye me-1"></i>View Book
+                                                        </a>
+                                                        <% if(books[i].review_id || books[i].REVIEW_ID) { %>
+                                                            <button class="btn btn-warning btn-sm rounded-pill edit-review-btn" data-book-id="<%= books[i].id || books[i].BOOK_ID %>" data-review-id="<%= books[i].review_id || books[i].REVIEW_ID %>">
+                                                                <i class="bi bi-pencil me-1"></i>Edit Review
+                                                            </button>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Edit Review Form (Hidden by default) -->
+                                                <% if(books[i].review_id || books[i].REVIEW_ID) { %>
+                                                    <div class="edit-review-form mt-3 d-none" id="edit-form-<%= books[i].id || books[i].BOOK_ID %>">
+                                                        <form action="/My-section/reviews/edit" method="POST">
+                                                            <input type="hidden" name="bookId" value="<%= books[i].id || books[i].BOOK_ID %>">
+                                                            <input type="hidden" name="reviewId" value="<%= books[i].review_id || books[i].REVIEW_ID %>">
+                                                            
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-semibold">Update your review:</label>
+                                                                <textarea name="review" class="form-control" rows="3" maxlength="500" required><%= books[i].description || books[i].review || '' %></textarea>
+                                                            </div>
+                                                            
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-semibold">Rating:</label>
+                                                                <div class="rating d-flex align-items-center">
+                                                                    <% for(let r = 5; r >= 1; r--) { %>
+                                                                        <input type="radio" name="rating" value="<%= r %>" id="rating-<%= books[i].id || books[i].BOOK_ID %>-<%= r %>" <% if(r === rating) { %>checked<% } %> required>
+                                                                        <label for="rating-<%= books[i].id || books[i].BOOK_ID %>-<%= r %>" class="me-1">⭐</label>
+                                                                    <% } %>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="d-flex gap-2">
+                                                                <button type="submit" class="btn btn-success btn-sm rounded-pill">
+                                                                    <i class="bi bi-check-lg me-1"></i>Update Review
+                                                                </button>
+                                                                <button type="button" class="btn btn-secondary btn-sm rounded-pill cancel-edit-btn" data-book-id="<%= books[i].id || books[i].BOOK_ID %>">
+                                                                    <i class="bi bi-x-lg me-1"></i>Cancel
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% } %>
+                    </div>
+                    
+                    <!-- Unreviewed Books Tab -->
+                    <div class="tab-pane fade" id="unreviewed">
+                        <% if(!unreviewdBooks || unreviewdBooks.length === 0) { %>
+                            <div class="text-center py-5">
+                                <i class="bi bi-star display-1 text-muted mb-3"></i>
+                                <h4 class="text-muted">All caught up!</h4>
+                                <p class="text-muted">You don't have any pending reviews. Great job!</p>
+                                <a href="/books" class="btn btn-primary rounded-pill px-4">
+                                    <i class="bi bi-book me-2"></i>Discover More Books
+                                </a>
+                            </div>
+                        <% } else { %>
+                            <% for(let i = 0; i < unreviewdBooks.length; i++){ %>
+                                <div class="card border-0 mb-3 review-card">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-3 col-sm-4 text-center">
+                                                <img src="<%= unreviewdBooks[i].IMAGE || '/images/books/defaultbook.jpg' %>" class="img-fluid rounded shadow-sm" style="max-width: 120px; height: auto;" alt="<%= unreviewdBooks[i].BOOK_NAME %>">
+                                            </div>
+                                            <div class="col-md-9 col-sm-8">
+                                                <a href="<%= "/books/"+unreviewdBooks[i].BOOK_ID %>" class="text-decoration-none">
+                                                    <h5 class="card-title text-primary mb-2"><%= unreviewdBooks[i].BOOK_NAME %></h5>
+                                                </a>
+                                                <p class="text-muted mb-3">by <span class="fw-semibold"><%= unreviewdBooks[i].AUTHOR_NAME %></span></p>
+                                                
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="badge bg-info text-white rounded-pill">
+                                                        <i class="bi bi-clock me-1"></i>Pending Review
+                                                    </span>
+                                                    <a href="<%= "/books/"+unreviewdBooks[i].BOOK_ID %>" class="btn btn-warning rounded-pill">
+                                                        <i class="bi bi-pencil me-1"></i>Write Review
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle edit review button clicks
+    const editButtons = document.querySelectorAll('.edit-review-btn');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const bookId = this.getAttribute('data-book-id');
+            const form = document.getElementById('edit-form-' + bookId);
+            if (form) {
+                form.classList.toggle('d-none');
+                this.style.display = form.classList.contains('d-none') ? 'inline-block' : 'none';
+            }
+        });
+    });
+
+    // Handle cancel edit button clicks
+    const cancelButtons = document.querySelectorAll('.cancel-edit-btn');
+    cancelButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const bookId = this.getAttribute('data-book-id');
+            const form = document.getElementById('edit-form-' + bookId);
+            const editBtn = document.querySelector(`.edit-review-btn[data-book-id="${bookId}"]`);
+            if (form && editBtn) {
+                form.classList.add('d-none');
+                editBtn.style.display = 'inline-block';
+            }
+        });
+    });
+});
+</script>

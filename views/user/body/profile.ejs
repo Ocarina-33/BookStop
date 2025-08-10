@@ -1,0 +1,116 @@
+<div class="row">
+    <div class="col-lg-3 col-md-4">
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-4">
+                        <img class="circular shadow-sm" src="<%=user.image%>" width="60" height="60" alt="Profile Picture">
+                    </div>
+                    <div class="col-8">
+                        <p class="text-muted mb-1">Welcome back,</p>
+                        <h5 class="mb-0 fw-bold"><%=user.name%></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="/My-section/profile" class="list-group-item list-group-item-action active border-0 fw-semibold" aria-current="true">
+                        <i class="bi bi-person-circle me-3"></i>My Account
+                    </a>
+                    <a href="/My-section/orders" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-bag-check me-3"></i>My Orders
+                    </a>
+                    <a href="/My-section/wishlist" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-heart me-3"></i>My Wishlist
+                    </a>
+                    <a href="/My-section/reviews" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-star me-3"></i>My Reviews
+                    </a>
+                    <a href="/my-section/notifications" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-bell me-3"></i>Notifications
+                                                    <% if (unreadCount > 0) { %>
+                                <span class="badge bg-danger rounded-pill float-end"><%= unreadCount %></span>
+                            <% } %>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-9 col-md-8">
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="bi bi-person-circle me-2 text-primary"></i>Profile</h3>
+                <a class="btn btn-warning rounded-pill px-4" href="/My-section/profile/edit">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                </a>
+            </div>
+        </div>
+        
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-4">
+                    <h3 class="mb-0 me-3">Personal Information</h3>
+                    <div class="flex-grow-1">
+                        <hr class="mb-0">
+                    </div>
+                </div>
+            <form action="/My-section/profile" method="post">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="floatingInput">Name</label>
+                            <input disabled required type="text" name="name" value="<%= user.name %>" class="form-control"
+                                   id="floatingInput" placeholder="Jon Doe">
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="dob" class="form-label pb-1">Your Date of Birth</label>
+                            <input disabled type="date" name="dob" value="<%=user.dob%>"
+                                   class="form-control personal p-3 date-of-birth">
+                        </div>
+
+                    </div>
+                </div>
+                <hr>
+                <h3>Contact Information</h3>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="floatingInput">Phone Number</label>
+                            <input disabled type="text" name="phone" value="<%= user.phone %>" class="form-control"
+                                   id="floatingInput" placeholder="+8801xxxxxxxxx">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="floatingInput">Email address</label>
+                            <input disabled type="email" name="email" value="<%=user.email%>" class="form-control"
+                                   id="floatingInput" placeholder="name@example.com">
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <h3>Profile Picture</h3>
+                <div class="row ">
+                    <div class="col-2">
+                        <img class="img-fluid circular" src="<%=user.image%>">
+                    </div>
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="floatingInput">Link</label>
+                            <input disabled type="text" name="image" value="<%=user.image%>" class="form-control"
+                                   id="floatingInput" placeholder="name@example.com">
+                        </div>
+                    </div>
+                </div>
+                <hr>
+
+            </form>
+        </section>
+    </div>
+</div>
+

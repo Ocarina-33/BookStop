@@ -1,0 +1,356 @@
+<div class="row">
+    <div class="col-lg-8 col-md-12">
+        <div class="card shadow border-0 mb-4">
+            <div class="card-body">
+                <div class="row align-items-center justify-content-between mb-3">
+                    <div class="col-md-12">
+                        <h3 class="mb-2">Total: <span id="total-top" class="text-primary fw-bold">432</span> Tk.</h3>
+                        <div class="badge bg-success fs-6">You are saving total TK. <span>0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow border-0">
+            <div class="card-body p-0">
+            <% for(let i = 0;i < items.length;i++){ %>
+                <div class="row p-4 border-bottom border-light align-items-center">
+                    <div class="col-md-2 col-sm-3">
+                        <img class="img-fluid rounded shadow-sm" src="<%= items[i].image %>" alt="<%= items[i].book_name %>">
+                    </div>
+                    <div class="col-md-10 col-sm-9">
+                        <div class="row align-items-center">
+                            <div class="col-md-7">
+                                <h5 class="card-title mb-2"><%= items[i].book_name %></h5>
+                                <p class="text-muted mb-2">by <span class="fw-semibold"><%= items[i].author_name %></span></p>
+                                <form action="/cart/remove" method="POST" style="display: inline;">
+                                    <input type="hidden" name="bookId" value="<%= items[i].book_id %>">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">
+                                        <i class="bi bi-trash me-1"></i>Remove
+                                    </button>
+                                </form>
+                                
+                                <div id="<%= 'stock'+items[i].id %>" class="badge bg-danger text-white fs-4 fw-bold mt-3 visually-hidden pulse-danger d-inline-flex align-items-center">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i> OUT OF STOCK
+                                </div>
+
+                        </div>
+                        <div class="col-2">
+
+                            <div class="row border">
+                                <button style="width: 26px;height: 26px; border-radius: 0"
+                                        id=<%= 'subBtn' + i %>
+                                        class="bg-light border-end col m-0 p-0 btn js-minus-btn
+                                " id="btn-minus"
+                                data-toggle="tooltip" title="" data-type="error"
+                                data-original-title="Please enter a value greater than or equal to 1">
+                                <ion-icon name="remove-outline"></ion-icon>
+                                </button>
+                                <input type="text" style="width: 40px;height: 26px;"
+                                       id=<%= 'input' + i %>
+
+                                       class="col m-0 p-0 btn img-fluid form-control bg-white shadow-none disabled"
+                                id="js--productQuantity-217978" value=<%= items[i].amount %> data-toggle="tooltip"
+                                data-title=""
+                                data-type="error" pid="217978" data-original-title="" title="">
+                                <button style="width: 26px;height: 26px; border-radius: 0"
+                                        id=<%= 'addBtn' + i %>
+                                        class="bg-light border-start col m-0 p-0 btn js-plus-btn
+                                " id="btn-plus"
+                                data-toggle="tooltip"
+                                data-title="Do you want to buy more than 99 copies? Please contact us on
+                                01708166233?"
+                                data-type="info" data-original-title="" title="">
+                                <ion-icon name="add-outline"></ion-icon>
+                                </button>
+                            </div>
+
+
+                        </div>
+                        <div class="col-3">
+                            <b id=<%= 'price' + i %>>TK: <%= items[i].price %></b>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+        <% } %>
+    </div>
+
+    <div class="shadow p-3 mt-3">
+        <span class="m-3">যত খুশি পণ্য একসাথে অর্ডার করুন, শিপিং চার্জ মাত্র ৫০ টাকা।</span>
+        <hr>
+        <% if(items.length === 0){ %>
+            <a class="btn btn-danger m-2 disabled" href="/cart/ship">Place Order</a>
+        <% }else{ %>
+            <a id="btnPlaceorder" class="btn btn-danger m-2" href="/cart/ship">Place Order</a>
+        <% } %>
+    </div>
+</div>
+
+<div class="col-4">
+    <div class="checkout-sidebar__content">
+
+        <div class="payment-breakdown mt-3">
+            <h4 class="m-3">Checkout Summary</h4>
+            <hr>
+            <div class="payment-breakdown__content">
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>Subtotal</td>
+                        <td class="text-right" id="subtotal">402 TK.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Shipping
+                        </td>
+                        <td class="text-right" id="shipping">50 TK.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Total</td>
+                        <td class="text-right" id="total">472 TK.
+                        </td>
+                    </tr>
+
+
+                    <tr class="payment-breakdown__content__table-last-tr" id="payabletr">
+                        <td class="font-weight-bold">Payable Total</td>
+                        <td class="text-right font-weight-bold" id="payable">472 TK.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+
+<!--popup-->
+
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">BookStop</strong>
+            <small>Now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Quantity updated successfully!
+        </div>
+    </div>
+
+    <div id="liveToastError" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">BookStop</strong>
+            <small>Now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Failed to update quantity
+        </div>
+    </div>
+</div>
+
+<script>
+    let total = 0;
+    let items = <%- JSON.stringify(items) %>;
+
+    for (let i = 0; i < items.length; i++) {
+        total += items[i].price * items[i].amount;
+        document.getElementById(`addBtn${i}`).onclick = (function (i) {
+            return function () {
+                total -= items[i].amount * items[i].price;
+                items[i].amount = items[i].amount + 1;
+                document.getElementById(`input${i}`).value = items[i].amount;
+                total += items[i].amount * items[i].price;
+                document.getElementById(`price${i}`).innerText = "TK: " + items[i].amount * items[i].price;
+                updateTotals(total);
+                updateStockStatus();
+                
+                // Auto-save quantity change
+                updateItemQuantity(items[i].id, items[i].amount);
+            };
+        })(i);
+        document.getElementById(`subBtn${i}`).onclick = (function (i) {
+            return function () {
+                total -= items[i].amount * items[i].price;
+                items[i].amount = Math.max(items[i].amount - 1, 1);
+                document.getElementById(`input${i}`).value = items[i].amount;
+                total += items[i].amount * items[i].price;
+                document.getElementById(`price${i}`).innerText = "TK: " + items[i].amount * items[i].price;
+                updateTotals(total);
+                updateStockStatus();
+                
+                // Auto-save quantity change
+                updateItemQuantity(items[i].id, items[i].amount);
+            };
+        })(i);
+    }
+
+    function updateTotals(total) {
+        document.getElementById('total-top').innerText = total;
+        document.getElementById('subtotal').innerText = total + ' TK.';
+        document.getElementById('total').innerText = (total + 50) + ' TK.';
+        document.getElementById('payable').innerText = (total + 50) + ' TK.';
+    }
+
+    updateTotals(total);
+    updateStockStatus();
+
+    // Debug: Log items data to console to verify stock values
+    console.log('Cart items data:', items);
+    
+    // Debug: Check if stock badges exist
+    for (let i = 0; i < items.length; i++) {
+        const stockBadge = document.getElementById(`stock` + items[i].id);
+        console.log(`Stock badge for item ${items[i].id}:`, stockBadge, `Stock: ${items[i].stock}, Amount: ${items[i].amount}`);
+    }
+
+    // Auto-update individual item quantity
+    function updateItemQuantity(itemId, newAmount) {
+        console.log(`🔄 Auto-updating item ${itemId} to quantity ${newAmount}`);
+        
+        $.ajax({
+            url: `/cart/update`,
+            type: 'POST',
+            data: {
+                items: JSON.stringify([{
+                    id: itemId,
+                    book_id: items.find(item => item.id === itemId).book_id,
+                    amount: newAmount
+                }])
+            },
+            success: function(response) {
+                console.log(`✅ Item ${itemId} updated successfully`);
+                // Show subtle success feedback
+                showUpdateFeedback(true);
+            },
+            error: function(xhr, status, error) {
+                console.error(`❌ Failed to update item ${itemId}:`, error);
+                // Show error feedback and revert the change if needed
+                showUpdateFeedback(false);
+                
+                // If it's a stock issue, show specific message
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    alert('Update failed: ' + xhr.responseJSON.error);
+                }
+            }
+        });
+    }
+
+    // Show feedback for quantity updates
+    function showUpdateFeedback(success) {
+        const toastId = success ? 'liveToast' : 'liveToastError';
+        const toastElement = document.getElementById(toastId);
+        if (toastElement) {
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    }
+
+    function sendItemCountUpdate() {
+        console.log('🔵 Save Changes clicked - starting cart update...');
+        console.log('📦 Items to update:', items);
+        
+        $.ajax({
+            url: `/cart/update`,
+            type: 'POST',
+            data: {items: JSON.stringify(items)},
+            beforeSend: function() {
+                console.log('🚀 Sending AJAX request to /cart/update');
+            },
+            statusCode: {
+                200: function (response) {
+                    console.log('✅ Cart update successful:', response);
+                    var toastLiveExample = document.getElementById('liveToast')
+                    var toast = new bootstrap.Toast(toastLiveExample)
+                    toast.show();
+                },
+                204: function () {
+                    console.log('⚠️ Cart update returned 204 (no content)');
+                    var toastLiveExample = document.getElementById('liveToastError')
+                    var toast = new bootstrap.Toast(toastLiveExample)
+                    toast.show()
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('❌ AJAX Error:', {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    responseText: xhr.responseText,
+                    error: error
+                });
+            }
+        });
+    }
+
+    function updateStockStatus() {
+        let totalOutOfStock = 0;
+        for (let i = 0; i < items.length; i++) {
+            // Show OUT OF STOCK if: 1) Stock is 0, OR 2) Requested amount exceeds available stock
+            if (items[i].stock === 0 || items[i].amount > items[i].stock) {
+                totalOutOfStock++;
+                let stocker = document.getElementById(`stock` + items[i].id);
+                if (stocker && stocker.classList.contains('visually-hidden')) {
+                    stocker.classList.remove('visually-hidden');
+                }
+            } else {
+                let stocker = document.getElementById(`stock` + items[i].id);
+                if (stocker && !stocker.classList.contains('visually-hidden')) {
+                    stocker.classList.add('visually-hidden');
+                }
+            }
+        }
+        
+        // Enable/disable place order button based on stock availability
+        const placeOrderBtn = document.getElementById('btnPlaceorder');
+        if (placeOrderBtn) {
+            if (totalOutOfStock !== 0) {
+                if (!placeOrderBtn.classList.contains('disabled')) {
+                    placeOrderBtn.classList.add('disabled');
+                }
+            } else {
+                if (placeOrderBtn.classList.contains('disabled')) {
+                    placeOrderBtn.classList.remove('disabled');
+                }
+            }
+        }
+    }
+
+</script>
+<style>
+    .pulse-danger {
+        animation: pulse-red 3.5s infinite;
+        display: inline-flex !important;
+        visibility: visible !important;
+    }
+
+    @keyframes pulse-red {
+        0% { 
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+            transform: scale(1);
+        }
+        70% { 
+            box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+            transform: scale(1.05);
+        }
+        100% { 
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+            transform: scale(1);
+        }
+    }
+
+    /* Ensure out-of-stock badge is always visible when not hidden */
+    .badge.bg-danger {
+        z-index: 10;
+        position: relative;
+    }
+</style>

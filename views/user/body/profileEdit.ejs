@@ -1,0 +1,140 @@
+
+
+<div class="row">
+    <div class="col-lg-3 col-md-4">
+        <!-- User Profile Card -->
+        <div class="card shadow border-0 mt-5">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-4">
+                        <img class="circular shadow-sm" src="<%=user.image%>" width="60" height="60" alt="Profile Picture">
+                    </div>
+                    <div class="col-8">
+                        <p class="text-muted mb-1">Welcome back,</p>
+                        <h5 class="mb-0 fw-bold"><%=user.name%></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Menu -->
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="/My-section/profile" class="list-group-item list-group-item-action active border-0 fw-semibold">
+                        <i class="bi bi-person-circle me-3"></i>My Account
+                    </a>
+                    <a href="/My-section/orders" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-bag-check me-3"></i>My Orders
+                    </a>
+                    <a href="/My-section/wishlist" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-heart me-3"></i>My Wishlist
+                    </a>
+                    <a href="/My-section/reviews" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-star me-3"></i>My Reviews
+                    </a>
+                    <a href="/my-section/notifications" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-bell me-3"></i>Notifications
+                                                    <% if (unreadCount > 0) { %>
+                                <span class="badge bg-danger rounded-pill float-end"><%= unreadCount %></span>
+                            <% } %>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-9 col-md-8">
+        <!-- Header Section -->
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-gear text-primary me-3 fs-4"></i>
+                        <h3 class="mb-0">Edit Profile</h3>
+                    </div>
+                    <a href="/My-section/profile" class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+
+    <!-- Edit Form Card -->
+    <div class="card shadow border-0 mt-3">
+        <div class="card-body">
+            <form action="/My-section/profile" method="post" class="needs-validation" novalidate>
+
+                <!-- Personal Information Section -->
+                <div class="d-flex align-items-center mb-4">
+                    <h3 class="mb-0 me-3">Personal Information</h3>
+                    <div class="flex-grow-1">
+                        <hr class="mb-0">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="nameInput" class="form-label fw-semibold">
+                                <i class="bi bi-person me-2"></i>Full Name
+                            </label>
+                            <input required type="text" name="name" value="<%= user.name %>" class="form-control border-2"
+                                   id="nameInput" placeholder="Full Name">
+                            <div class="invalid-feedback">Please provide a valid name.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="dobInput" class="form-label fw-semibold">
+                                <i class="bi bi-calendar3 me-2"></i>Date of Birth
+                            </label>
+                            <input type="date" name="dob" value="<%= user.dob %>" id="dobInput"
+                                   class="form-control border-2 p-3">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information Section -->
+                <hr>
+                <h3>Contact Information</h3>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="phoneInput" class="form-label">Phone Number</label>
+                            <input type="text" name="phone" value="<%= user.phone %>" class="form-control"
+                                   id="phoneInput" placeholder="+8801xxxxxxxxx">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="emailInput" class="form-label">Email Address</label>
+                            <input disabled type="email" name="email" value="<%= user.email %>" class="form-control"
+                                   id="emailInput" placeholder="name@example.com">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Picture Section -->
+                <hr>
+                <h3>Profile Picture</h3>
+                <div class="row align-items-center">
+                    <div class="col-2">
+                        <img class="img-fluid circular" src="<%= user.image %>">
+                    </div>
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="imageInput" class="form-label">Link</label>
+                            <input type="text" name="image" value="<%= user.image %>" class="form-control"
+                                   id="imageInput" placeholder="Image URL">
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button class="btn btn-warning" type="submit">Save Profile</button>
+            </form>
+        </section>
+    </div>
+</div>
+

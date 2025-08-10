@@ -1,0 +1,160 @@
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title" style="color: #8B4513;">
+                                <i class="bi bi-receipt me-2"></i>Order Details #<%= items.ID %>
+                            </h3>
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-calendar me-1"></i>
+                                Order Date: <%= new Date(items.CREATED_AT).toLocaleDateString() %>
+                            </p>
+                        </div>
+                        <a href="/admin/order" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Back to Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <div class="card shadow-sm mb-3" style="border-color: #8B4513;">
+                        <div class="card-header text-white" style="background-color: #8B4513;">
+                            <h5 class="mb-0">
+                                <i class="bi bi-truck me-2"></i>Delivery Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong>Customer Name:</strong><br/>
+                                <span class="text-muted"><%= items.NAME %></span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Primary Phone:</strong><br/>
+                                <span class="text-muted"><%= items.PHONE1 %></span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Alternative Phone:</strong><br/>
+                                <span class="text-muted"><%= items.PHONE2 %></span>
+                            </div>
+                            <div class="mb-0">
+                                <strong>Delivery Address:</strong><br/>
+                                <span class="text-muted"><%= items.ADDRESS %></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow-sm" style="border-color: #8B4513;">
+                        <div class="card-header text-white" style="background-color: #228B22;">
+                            <h5 class="mb-0">
+                                <i class="bi bi-calculator me-2"></i>Order Summary
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Items:</span>
+                                <span class="fw-bold"><%= items.TOTAL_ITEM %></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Price:</span>
+                                <span class="fw-bold text-success">৳<%= items.TOTAL_PRICE %></span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Status:</span>
+                                <% 
+                                    let statusText = '';
+                                    let statusClass = '';
+                                    switch(items.STATE) {
+                                        case 1: statusText = 'Processing'; statusClass = 'bg-warning'; break;
+                                        case 2: statusText = 'Approved'; statusClass = 'bg-info'; break;
+                                        case 3: statusText = 'On Shipping'; statusClass = 'bg-primary'; break;
+                                        case 4: statusText = 'Shipped'; statusClass = 'bg-success'; break;
+                                        case 5: statusText = 'Completed'; statusClass = 'bg-success'; break;
+                                        case 6: statusText = 'Cancelled'; statusClass = 'bg-danger'; break;
+                                        case 7: statusText = 'Returned'; statusClass = 'bg-secondary'; break;
+                                        default: statusText = 'Unknown'; statusClass = 'bg-secondary';
+                                    }
+                                %>
+                                <span class="badge <%= statusClass %>"><%= statusText %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-8">
+                    <div class="card shadow-sm" style="border-color: #8B4513;">
+                        <div class="card-header text-white" style="background-color: #8B4513;">
+                            <h5 class="mb-0">
+                                <i class="bi bi-list-ul me-2"></i>Ordered Items
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <% for(let i = 0; i < books.length; i++){ %>
+                                <div class="row align-items-center mb-3 <% if(i < books.length - 1) { %>border-bottom pb-3<% } %>">
+                                    <div class="col-2">
+                                        <img src="<%= books[i].IMAGE %>" class="img-fluid rounded shadow-sm" style="max-height: 100px; object-fit: cover;"/>
+                                    </div>
+                                    <div class="col-5">
+                                        <a href="/books/<%= books[i].BOOK_ID %>" class="text-decoration-none" style="color: #8B4513;" target="_blank">
+                                            <h6 class="mb-1 fw-bold"><%= books[i].BOOK_NAME %></h6>
+                                        </a>
+                                        <p class="text-muted mb-0">
+                                            <i class="bi bi-person me-1"></i>
+                                            <small><%= books[i].AUTHOR_NAME %></small>
+                                        </p>
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <div class="text-muted small">Unit Price</div>
+                                        <div class="fw-bold">৳<%= books[i].PRICE %></div>
+                                    </div>
+                                    <div class="col-1 text-center">
+                                        <div class="text-muted small">Qty</div>
+                                        <div class="fw-bold"><%= books[i].AMOUNT %></div>
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <div class="text-muted small">Total</div>
+                                        <div class="fw-bold text-success">৳<%= books[i].AMOUNT * books[i].PRICE %></div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

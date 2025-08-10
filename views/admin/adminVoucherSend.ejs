@@ -1,0 +1,491 @@
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <!-- Header Card with Gradient -->
+            <div class="card shadow-lg mt-3 mb-4" style="border: none; background: linear-gradient(135deg, #fcf3ed 0%, #ffffff 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="card-title mb-2 fw-bold" style="color: #FFFFFF; text-shadow: 2px 2px 4px rgba(218, 212, 212, 0.5);">
+                                <i class="bi bi-send-fill me-3" style="color: #6b9345;"></i>Send Voucher to Users
+                            </h2>
+                            <p class="mb-0" style="color: #3e6a42; opacity: 0.9;">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Distribute voucher notifications to selected customers
+                            </p>
+                        </div>
+                        <a href="/admin/voucher" class="btn btn-light btn-lg shadow-sm transition-hover" 
+                           style="border: 2px solid #138b2d; color: #507946; transition: all 0.3s ease;"
+                           onmouseover="this.style.backgroundColor='#245939'; this.style.color='white'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(139, 69, 19, 0.3)'"
+                           onmouseout="this.style.backgroundColor='#f8f9fa'; this.style.color='#654321'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Vouchers
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Success/Error Messages -->
+            <div id="messageDiv" class="alert alert-dismissible fade show d-none shadow-sm" role="alert" style="border-left: 4px solid #8B4513;">
+                <span id="messageText"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <!-- Voucher Information Card -->
+            <div class="card shadow-lg mb-4" style="border: none; border-radius: 15px; overflow: hidden;">
+                <div class="card-header text-white py-4" style="background: linear-gradient(90deg, #A0522D 0%, #95512c 100%); border: none;">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-circle me-3" style="background-color: rgba(255, 255, 255, 0.2);">
+                            <i class="bi bi-tag-fill fs-2 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-1 fw-bold" style="color: #FFF8DC; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Voucher Details</h4>
+                            <p class="mb-0" style="color: #F5DEB3; opacity: 0.9;">Review the voucher information before sending</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4" style="background-color: #fafafa;">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="text-center p-3 rounded-3" style="background: linear-gradient(135deg, #D2B48C 0%, #e1a162 100%); color: #3E2723;">
+                                <i class="bi bi-code-slash fs-1 mb-2" style="color: #5D4037;"></i>
+                                <h6 class="mb-1 text-uppercase" style="color: #6D4C41; font-weight: 600;">Voucher Code</h6>
+                                <h5 class="mb-0 fw-bold" style="color: #3E2723;"><%= voucher.name %></h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-3 rounded-3" style="background: linear-gradient(135deg, #C8E6C9 0%, #A5D6A7 100%); color: #1B5E20;">
+                                <i class="bi bi-percent fs-1 mb-2" style="color: #2E7D32;"></i>
+                                <h6 class="mb-1 text-uppercase" style="color: #388E3C; font-weight: 600;">Discount</h6>
+                                <h5 class="mb-0 fw-bold" style="color: #1B5E20;"><%= voucher.discount %>% OFF</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-3 rounded-3" style="background: linear-gradient(135deg, #f0d1a7 0%, #ecdb95 100%); color: #7D6608;">
+                                <i class="bi bi-currency-dollar fs-1 mb-2" style="color: #935116;"></i>
+                                <h6 class="mb-1 text-uppercase" style="color: #8D6E63; font-weight: 600;">Max Discount</h6>
+                                <h5 class="mb-0 fw-bold" style="color: #7D6608;">৳<%= voucher.cap %></h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-3 rounded-3" style="background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 100%); color: #2E7D32;">
+                                <i class="bi bi-calendar-event fs-1 mb-2" style="color: #388E3C;"></i>
+                                <h6 class="mb-1 text-uppercase" style="color: #4CAF50; font-weight: 600;">Valid Until</h6>
+                                <h5 class="mb-0 fw-bold" style="color: #2E7D32;"><%= new Date(voucher.validity).toLocaleDateString() %></h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Send Voucher Form -->
+            <div class="card shadow-lg" style="border: none; border-radius: 15px; overflow: hidden;">
+                <div class="card-header text-white py-4" style="background: linear-gradient(90deg, #2c5038 0%, #2c5038 100%); border: none;">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-circle me-3" style="background-color: rgba(255, 255, 255, 0.2);">
+                            <i class="bi bi-people-fill fs-2 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-1 fw-bold" style="color: #FFF8DC; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Select Recipients & Compose Message</h4>
+                            <p class="mb-0" style="color: #F5DEB3; opacity: 0.9;">Choose users and customize the notification message</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4" style="background-color: #fafafa;">
+                    <form id="sendVoucherForm" method="POST" action="/admin/voucher/send/<%= voucher.id %>">
+                        <!-- User Selection Section -->
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="me-3 p-2 rounded-circle" style="background-color: #8B4513; color: white;">
+                                        <span class="fw-bold">1</span>
+                                    </div>
+                                    <h5 class="mb-0" style="color: #654321;">Select Users to Send Voucher</h5>
+                                </div>
+                                
+                                <!-- User Filter -->
+                                <div class="mb-4">
+                                    <label for="userFilter" class="form-label fw-semibold" style="color: #654321;">
+                                        <i class="bi bi-search me-2"></i>Filter Users
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg shadow-sm" id="userFilter" 
+                                           placeholder="Search users by name or email..." 
+                                           style="border: 2px solid #e9ecef; border-radius: 10px;">
+                                </div>
+
+                                <!-- User Selection -->
+                                <div class="border-0 rounded-4 shadow-sm" style="max-height: 400px; overflow-y: auto; background-color: white;">
+                                    <div class="p-4 border-bottom d-flex justify-content-between align-items-center" style="background: linear-gradient(90deg, #f8f9fa 0%, #e9ecef 100%);">
+                                        <div>
+                                            <button type="button" class="btn btn-sm shadow-sm me-3 transition-hover" 
+                                                    style="background: linear-gradient(135deg, #A5D6A7 0%, #81C784 100%); color: #1B5E20; border: 1px solid #4CAF50; border-radius: 8px; transition: all 0.3s ease;" 
+                                                    onmouseover="this.style.background='linear-gradient(135deg, #81C784 0%, #66BB6A 100%)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(76, 175, 80, 0.3)'"
+                                                    onmouseout="this.style.background='linear-gradient(135deg, #A5D6A7 0%, #81C784 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'"
+                                                    id="selectAllUsers">
+                                                <i class="bi bi-check-all me-2"></i>Select All
+                                            </button>
+                                            <button type="button" class="btn btn-sm shadow-sm transition-hover" 
+                                                    style="background: linear-gradient(135deg, #EFEBE9 0%, #D7CCC8 100%); color: #5D4037; border: 1px solid #8D6E63; border-radius: 8px; transition: all 0.3s ease;" 
+                                                    onmouseover="this.style.background='linear-gradient(135deg, #D7CCC8 0%, #BCAAA4 100%)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(93, 64, 55, 0.3)'"
+                                                    onmouseout="this.style.background='linear-gradient(135deg, #EFEBE9 0%, #D7CCC8 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'"
+                                                    id="deselectAllUsers">
+                                                <i class="bi bi-x-circle me-2"></i>Deselect All
+                                            </button>
+                                        </div>
+                                        <small class="text-muted fw-semibold" id="userCounter">Loading users...</small>
+                                    </div>
+                                    <div class="p-3" id="usersList">
+                                        <!-- Users will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Message Composition Section -->
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="me-3 p-2 rounded-circle" style="background-color: #8B4513; color: white;">
+                                        <span class="fw-bold">2</span>
+                                    </div>
+                                    <h5 class="mb-0" style="color: #654321;">Compose Notification Message</h5>
+                                </div>
+                                
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label for="notificationTitle" class="form-label fw-semibold" style="color: #654321;">
+                                            <i class="bi bi-chat-quote me-2"></i>Notification Title <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg shadow-sm" id="notificationTitle" name="title" 
+                                               value="Special <%= voucher.discount %>% Off Voucher Just for You!" required
+                                               style="border: 2px solid #e9ecef; border-radius: 10px;">
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>This will appear as the notification headline
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold" style="color: #654321;">
+                                            <i class="bi bi-eye me-2"></i>Title Preview
+                                        </label>
+                                        <div class="border rounded-3 p-3 shadow-sm" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 2px solid #e9ecef !important;" id="titlePreview">
+                                            Special <%= voucher.discount %>% Off Voucher Just for You!
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <label for="notificationMessage" class="form-label fw-semibold" style="color: #654321;">
+                                        <i class="bi bi-textarea-resize me-2"></i>Notification Message <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea class="form-control shadow-sm" id="notificationMessage" name="message" rows="6" required
+                                              style="border: 2px solid #e9ecef; border-radius: 10px;">দারুণ খবর! আপনি BookStop-এর পক্ষ থেকে একটি বিশেষ <%= voucher.discount %>% ছাড়ের ভাউচার পেয়েছেন।
+
+চেকআউটের সময় "<%= voucher.name %>" কোডটি ব্যবহার করুন এবং আপনার পরবর্তী কেনাকাটায় সর্বোচ্চ ৳<%= voucher.cap %> পর্যন্ত ছাড় উপভোগ করুন। শুভ কেনাকাটা!</textarea>
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle me-1"></i>Detailed message that will be sent to users
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Send Button Section -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center p-4 rounded-4" 
+                                     style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 2px dashed #8B4513;">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold" style="color: #654321;">
+                                            <i class="bi bi-shield-check me-2"></i>Ready to Send?
+                                        </h6>
+                                        <small class="text-muted">
+                                            Selected users will receive both the voucher and a notification
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <a href="/admin/voucher" class="btn btn-outline-secondary btn-lg me-3 shadow-sm transition-hover" 
+                                           style="border-radius: 10px; border: 2px solid #8D6E63; color: #5D4037; transition: all 0.3s ease;"
+                                           onmouseover="this.style.backgroundColor='#5D4037'; this.style.color='white'; this.style.borderColor='#5D4037'; this.style.transform='translateY(-2px)'"
+                                           onmouseout="this.style.backgroundColor='transparent'; this.style.color='#5D4037'; this.style.borderColor='#8D6E63'; this.style.transform='translateY(0)'">
+                                            <i class="bi bi-x-circle me-2"></i>Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-lg shadow-lg transition-hover" id="sendVoucherBtn"
+                                                style="background: linear-gradient(135deg, #A5D6A7 0%, #66BB6A 100%); color: #1B5E20; border: 2px solid #4CAF50; border-radius: 10px; min-width: 200px; font-weight: 600; transition: all 0.3s ease;"
+                                                onmouseover="if(!this.disabled) { this.style.background='linear-gradient(135deg, #81C784 0%, #4CAF50 100%)'; this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 12px 30px rgba(76, 175, 80, 0.4)'; }"
+                                                onmouseout="if(!this.disabled) { this.style.background='linear-gradient(135deg, #A5D6A7 0%, #66BB6A 100%)'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'; }">
+                                            <i class="bi bi-send me-2"></i>Send to Selected Users
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .transition-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    .transition-hover:hover {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    .user-item {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .user-item:hover {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Button focus states for accessibility */
+    .btn:focus {
+        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.3) !important;
+    }
+    
+    .btn-green:focus {
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3) !important;
+    }
+</style>
+
+<script>
+    let allUsers = [];
+    
+    // Load users when page loads
+    window.addEventListener('DOMContentLoaded', async function() {
+        await loadUsers();
+    });
+    
+    // Handle success/error messages
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
+    
+    if (success) {
+        showMessage(success, 'success');
+    } else if (error) {
+        showMessage(error, 'danger');
+    }
+    
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('messageDiv');
+        const messageText = document.getElementById('messageText');
+        
+        messageDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        messageText.textContent = message;
+        messageDiv.classList.remove('d-none');
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            messageDiv.classList.add('d-none');
+        }, 5000);
+    }
+    
+    async function loadUsers() {
+        console.log('=== loadUsers() called ===');
+        try {
+            console.log('Making fetch request to /admin/notifications/api/users');
+            const response = await fetch('/admin/notifications/api/users');
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Response error:', errorText);
+                throw new Error('Failed to load users: ' + response.status);
+            }
+            
+            allUsers = await response.json();
+            console.log('Users loaded successfully:', allUsers.length, 'users');
+            renderUsers(allUsers);
+        } catch (error) {
+            console.error('Error loading users:', error);
+            document.getElementById('usersList').innerHTML = '<div class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Error loading users: ' + error.message + '. Please refresh the page.</div>';
+        }
+    }
+    
+    function renderUsers(users) {
+        const usersList = document.getElementById('usersList');
+        const userCounter = document.getElementById('userCounter');
+        
+        if (users.length === 0) {
+            usersList.innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-people fs-1 mb-3"></i>
+                    <h6>No users found</h6>
+                    <p class="mb-0">Try adjusting your search criteria</p>
+                </div>
+            `;
+            userCounter.textContent = '0 users available';
+            return;
+        }
+        
+        usersList.innerHTML = users.map(user => `
+            <div class="form-check user-item mb-3 p-3 rounded-3 shadow-sm transition" 
+                 style="background: linear-gradient(135deg, #FFF8DC 0%, #F5DEB3 100%); border: 2px solid #D2B48C; cursor: pointer; transition: all 0.3s ease;" 
+                 data-name="${(user.username || '').toLowerCase()}" data-email="${(user.email || '').toLowerCase()}"
+                 onmouseover="this.style.borderColor='#8B4513'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(139, 69, 19, 0.15)'"
+                 onmouseout="this.style.borderColor='#D2B48C'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 10px rgba(0,0,0,0.1)'">
+                <input class="form-check-input" type="checkbox" name="userIds" value="${user.id}" id="user${user.id}" 
+                       style="width: 20px; height: 20px; border: 2px solid #8B4513;">
+                <label class="form-check-label w-100 ms-3" for="user${user.id}" style="cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 fw-bold" style="color: #5D4037;">${user.username || 'N/A'}</h6>
+                            <small style="color: #8D6E63;">
+                                <i class="bi bi-envelope me-1"></i>${user.email || 'N/A'}</small>
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge mb-1" style="background: linear-gradient(135deg, #D2B48C 0%, #CD853F 100%); color: #5D4037; border: 1px solid #8D6E63;">
+                                <i class="bi bi-bag me-1"></i>${parseInt(user.total_orders) || 0} orders
+                            </div>
+                            <br>
+                            <div class="badge" style="background: linear-gradient(135deg, #C8E6C9 0%, #A5D6A7 100%); color: #2E7D32; border: 1px solid #4CAF50;">
+                                <i class="bi bi-currency-dollar me-1"></i>৳${parseInt(user.total_spent) || 0} spent
+                            </div>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        `).join('');
+        
+        userCounter.innerHTML = `<i class="bi bi-people-fill me-1"></i>${users.length} users available`;
+        
+        // Event listeners for select/deselect all
+        document.getElementById('selectAllUsers').onclick = () => {
+            document.querySelectorAll('.user-item:not([style*="display: none"]) input[type="checkbox"]').forEach(cb => cb.checked = true);
+            updateSelectedCount();
+        };
+        
+        document.getElementById('deselectAllUsers').onclick = () => {
+            document.querySelectorAll('.user-item input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateSelectedCount();
+        };
+        
+        // Add change listeners to checkboxes
+        document.querySelectorAll('input[name="userIds"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+        
+        updateSelectedCount();
+    }
+    
+    function updateSelectedCount() {
+        const selectedCount = document.querySelectorAll('input[name="userIds"]:checked').length;
+        const sendBtn = document.getElementById('sendVoucherBtn');
+        
+        if (selectedCount > 0) {
+            sendBtn.innerHTML = `<i class="bi bi-send me-2"></i>Send to ${selectedCount} Selected User${selectedCount > 1 ? 's' : ''}`;
+            sendBtn.disabled = false;
+            sendBtn.style.background = 'linear-gradient(135deg, #A5D6A7 0%, #66BB6A 100%)';
+            sendBtn.style.color = '#1B5E20';
+            sendBtn.style.border = '2px solid #4CAF50';
+            sendBtn.style.transform = 'scale(1.02)';
+            sendBtn.style.cursor = 'pointer';
+            // Re-add hover attributes for enabled state
+            sendBtn.setAttribute('onmouseover', "this.style.background='linear-gradient(135deg, #81C784 0%, #4CAF50 100%)'; this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 12px 30px rgba(76, 175, 80, 0.4)';");
+            sendBtn.setAttribute('onmouseout', "this.style.background='linear-gradient(135deg, #A5D6A7 0%, #66BB6A 100%)'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';");
+        } else {
+            sendBtn.innerHTML = `<i class="bi bi-send me-2"></i>Send to Selected Users`;
+            sendBtn.disabled = true;
+            sendBtn.style.background = 'linear-gradient(135deg, #EFEBE9 0%, #D7CCC8 100%)';
+            sendBtn.style.color = '#8D6E63';
+            sendBtn.style.border = '2px solid #BCAAA4';
+            sendBtn.style.transform = 'scale(1)';
+            sendBtn.style.cursor = 'not-allowed';
+            // Remove hover effects for disabled state
+            sendBtn.removeAttribute('onmouseover');
+            sendBtn.removeAttribute('onmouseout');
+        }
+    }
+    
+    // User filtering
+    document.getElementById('userFilter').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const userItems = document.querySelectorAll('.user-item');
+        let visibleCount = 0;
+        
+        userItems.forEach(item => {
+            const name = item.dataset.name;
+            const email = item.dataset.email;
+            if (name.includes(filter) || email.includes(filter)) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('userCounter').innerHTML = `<i class="bi bi-search me-1"></i>${visibleCount} of ${allUsers.length} users shown`;
+    });
+    
+    // Title preview update
+    document.getElementById('notificationTitle').addEventListener('input', function() {
+        document.getElementById('titlePreview').textContent = this.value || 'Preview will appear here...';
+    });
+    
+    // Form submission
+    document.getElementById('sendVoucherForm').addEventListener('submit', function(e) {
+        const selectedUsers = document.querySelectorAll('input[name="userIds"]:checked');
+        const title = document.getElementById('notificationTitle').value.trim();
+        const message = document.getElementById('notificationMessage').value.trim();
+        
+        if (selectedUsers.length === 0) {
+            e.preventDefault();
+            showMessage('Please select at least one user to send the voucher to.', 'warning');
+            return;
+        }
+        
+        if (!title || !message) {
+            e.preventDefault();
+            showMessage('Please fill in both title and message fields.', 'warning');
+            return;
+        }
+        
+        // Show loading state with modern styling
+        const sendBtn = document.getElementById('sendVoucherBtn');
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Sending Vouchers...';
+        sendBtn.style.background = 'linear-gradient(135deg, #FFE082 0%, #FFD54F 100%)';
+        sendBtn.style.color = '#F57F17';
+        sendBtn.style.border = '2px solid #FFC107';
+        sendBtn.style.transform = 'scale(0.98)';
+        sendBtn.style.cursor = 'wait';
+        // Remove hover effects during loading
+        sendBtn.removeAttribute('onmouseover');
+        sendBtn.removeAttribute('onmouseout');
+    });
+</script>

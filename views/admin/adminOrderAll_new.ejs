@@ -1,0 +1,143 @@
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <h3 class="card-title" style="color: #8B4513;">
+                        <i class="bi bi-cart me-2"></i>Order Management
+                    </h3>
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Manage and track all customer orders
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Success/Error Messages -->
+            <div id="messageDiv" class="alert alert-dismissible fade show d-none" role="alert">
+                <span id="messageText"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">(Showing <%= orders.length %> pending orders)</h6>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead style="background-color: #8B4513; color: white;">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Total Price</th>
+                                    <th scope="col">Items</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for(let i = 0; i < orders.length; i++){ %>
+                                    <tr>
+                                        <td><%= orders[i].ID %></td>
+                                        <td class="fw-semibold"><%= orders[i].NAME %></td>
+                                        <td class="text-success fw-bold">৳<%= orders[i].TOTAL_PRICE %></td>
+                                        <td>
+                                            <span class="badge bg-info text-dark">
+                                                <%= orders[i].TOTAL_ITEM %> items
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <form action="/admin/order/update" method="post" class="d-inline">
+                                                <input type="hidden" name="orderId" value="<%= orders[i].ID %>"/>
+                                                <select id="select<%= i %>" name="orderStatus" class="form-select form-select-sm" style="min-width: 140px;">
+                                                    <option value="1">Processing</option>
+                                                    <option value="2">Approved</option>
+                                                    <option value="3">On Shipping</option>
+                                                    <option value="4">Shipped</option>
+                                                    <option value="5">Completed</option>
+                                                    <option value="6">Cancelled</option>
+                                                    <option value="7">Returned</option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="submit" class="btn text-white" style="background-color: #228B22;">
+                                                    <i class="bi bi-check-circle me-1"></i>Update
+                                                </button>
+                                                </form>
+                                                <a class="btn btn-outline-primary btn-sm" href="/admin/order/<%= orders[i].ID %>" target="_blank">
+                                                    <i class="bi bi-eye me-1"></i>Details
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set the current status for each order
+    let orders = <%- JSON.stringify(orders) %>;
+    for(let i = 0; i < orders.length; i++){
+        document.getElementById('select' + i).value = orders[i].STATE;
+    }
+    
+    // Handle success/error messages
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
+    
+    if (success) {
+        showMessage(success, 'success');
+    } else if (error) {
+        showMessage(error, 'danger');
+    }
+    
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('messageDiv');
+        const messageText = document.getElementById('messageText');
+        
+        messageDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        messageText.textContent = message;
+        messageDiv.classList.remove('d-none');
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            messageDiv.classList.add('d-none');
+        }, 5000);
+    }
+</script>

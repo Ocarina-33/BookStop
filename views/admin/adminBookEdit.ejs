@@ -1,0 +1,189 @@
+
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                <a href="/admin/restock" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-box-seam me-2"></i>Restock
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <h3 class="card-title" style="color: #8B4513;">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Book
+                    </h3>
+                </div>
+            </div>
+            
+            <!-- Success/Error Messages -->
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i><%= success %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <% } %>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i><%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <% } %>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form action="/admin/book/edit" method="post">
+                        <input type="hidden" name="id" value="<%=book.id%>">
+                        
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-info-circle me-2"></i>Main Information
+                        </h4>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="nameInput" class="form-label fw-semibold">Book Name</label>
+                                <input type="text" name="name" value="<%=book.name%>" class="form-control" 
+                                       id="nameInput" disabled style="background-color: #f8f9fa;">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="isbnInput" class="form-label fw-semibold">ISBN</label>
+                                <input type="text" name="isbn" value="<%=book.isbn%>" class="form-control" 
+                                       id="isbnInput" disabled style="background-color: #f8f9fa;">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="authorInput" class="form-label fw-semibold">Author Name</label>
+                                <input type="text" name="author_name" value="<%=book.author_name%>" class="form-control" 
+                                       id="authorInput" disabled style="background-color: #f8f9fa;">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="publisherInput" class="form-label fw-semibold">Publisher Name</label>
+                                <input type="text" name="publisher_name" value="<%=book.publisher_name%>" class="form-control" 
+                                       id="publisherInput" disabled style="background-color: #f8f9fa;">
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-image me-2"></i>Book Image
+                        </h4>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <img src="<%=book.image%>" class="img-fluid rounded shadow-sm" 
+                                     style="max-height: 200px; object-fit: cover;" alt="Book cover">
+                            </div>
+                            <div class="col-md-9">
+                                <label for="imageInput" class="form-label fw-semibold">Image URL</label>
+                                <input type="url" name="image" value="<%=book.image%>" class="form-control" 
+                                       id="imageInput" placeholder="Enter image URL">
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-gear me-2"></i>Book Details
+                        </h4>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="languageInput" class="form-label fw-semibold">Language</label>
+                                <input type="text" name="language" value="<%=book.language%>" class="form-control" 
+                                       id="languageInput" disabled style="background-color: #f8f9fa;">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="pageInput" class="form-label fw-semibold">Number of Pages</label>
+                                <input type="number" name="page" value="<%=book.page%>" class="form-control" 
+                                       id="pageInput" min="1">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="yearInput" class="form-label fw-semibold">Publishing Year <span class="text-muted">(optional)</span></label>
+                                <input type="number" name="year" value="<%=book.publishing_year%>" class="form-control" 
+                                       id="yearInput" min="1800" max="2030" placeholder="e.g., 2020">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editionInput" class="form-label fw-semibold">Edition</label>
+                                <input type="text" name="edition" value="<%=book.edition%>" class="form-control" 
+                                       id="editionInput" placeholder="e.g., 1st Edition, 2020">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="priceInput" class="form-label fw-semibold">Price (৳)</label>
+                                <input type="number" name="price" value="<%=book.price%>" class="form-control" 
+                                       id="priceInput" min="0" step="0.01">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="stockInput" class="form-label fw-semibold">Stock Quantity</label>
+                                <input type="number" name="stock" value="<%=book.stock%>" class="form-control" 
+                                       id="stockInput" min="0" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="genreInput" class="form-label fw-semibold">Genre</label>
+                                <input type="text" name="genre" value="<%= book.genre || '' %>" class="form-control" 
+                                       id="genreInput" placeholder="e.g., Fiction, Science">
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn text-white" type="submit" style="background-color: #228B22;">
+                                <i class="bi bi-check-lg me-1"></i>Save Changes
+                            </button>
+                            <a class="btn btn-secondary" href="/admin/book">
+                                <i class="bi bi-x-lg me-1"></i>Cancel
+                            </a>
+                            <button type="button" class="btn btn-danger ms-auto" onclick="confirmDelete()">
+                                <i class="bi bi-trash me-1"></i>Delete Book
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Hidden delete form -->
+                    <form id="deleteForm" action="/admin/book/delete/<%=book.id%>" method="post" style="display: none;">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete() {
+    if (confirm('Are you sure you want to delete this book? This action cannot be undone.\n\nNote: Books with existing orders, reviews, or cart items cannot be deleted.')) {
+        document.getElementById('deleteForm').submit();
+    }
+}
+</script>

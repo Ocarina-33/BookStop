@@ -1,0 +1,263 @@
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title" style="color: #8B4513;">
+                                <i class="bi bi-pencil-square me-2"></i>Edit Voucher
+                            </h3>
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Modify voucher details - "<%= voucher.name %>"
+                            </p>
+                        </div>
+                        <a href="/admin/voucher" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Back to Vouchers
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Success/Error Messages -->
+            <div id="messageDiv" class="alert alert-dismissible fade show d-none" role="alert">
+                <span id="messageText"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form action="/admin/voucher/edit" method="post" id="voucherForm">
+                        <input type="hidden" name="id" value="<%= voucher.id %>">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card shadow-sm mb-3" style="border-color: #8B4513;">
+                                    <div class="card-header text-white" style="background-color: #8B4513;">
+                                        <h5 class="mb-0">
+                                            <i class="bi bi-info-circle me-2"></i>Basic Information
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="nameInput" class="form-label">
+                                                <i class="bi bi-tag me-1"></i>Voucher Name <span class="text-danger">*</span>
+                                            </label>
+                                            <input required type="text" name="name" value="<%= voucher.name %>" class="form-control"
+                                                   id="nameInput" placeholder="Enter voucher name (e.g., SUMMER2024)">
+                                            <div class="form-text">Use uppercase letters and numbers only</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="validity" class="form-label">
+                                                <i class="bi bi-calendar me-1"></i>Validity Until <span class="text-danger">*</span>
+                                            </label>
+                                            <input required type="date" name="validity" value="<%= voucher.validity %>"
+                                                   class="form-control" id="validity" min="<%= new Date().toISOString().split('T')[0] %>">
+                                            <div class="form-text">Select the expiration date for this voucher</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card shadow-sm mb-3" style="border-color: #228B22;">
+                                    <div class="card-header text-white" style="background-color: #228B22;">
+                                        <h5 class="mb-0">
+                                            <i class="bi bi-percent me-2"></i>Discount Settings
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="discountInput" class="form-label">
+                                                <i class="bi bi-percent me-1"></i>Discount Percentage <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <input required type="number" name="discount" value="<%= voucher.discount %>" class="form-control"
+                                                       id="discountInput" placeholder="10" min="1" max="100">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <div class="form-text">Enter discount percentage (1-100)</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="capInput" class="form-label">
+                                                <i class="bi bi-cash me-1"></i>Maximum Discount Amount <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">৳</span>
+                                                <input required type="number" name="cap" value="<%= voucher.cap %>" class="form-control"
+                                                       id="capInput" placeholder="500" min="1">
+                                            </div>
+                                            <div class="form-text">Maximum discount amount in Taka</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card shadow-sm" style="border-color: #f8f9fa;">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-muted mb-3">
+                                            <i class="bi bi-calculator me-1"></i>Discount Preview
+                                        </h6>
+                                        <div class="bg-light p-3 rounded">
+                                            <div class="mb-2">
+                                                <strong>Example: Order of ৳1000</strong>
+                                            </div>
+                                            <div id="discountPreview" class="text-muted">
+                                                Loading preview...
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-muted mb-3">
+                                            <i class="bi bi-info-circle me-1"></i>Voucher Status
+                                        </h6>
+                                        <div class="bg-light p-3 rounded">
+                                            <div class="mb-2">
+                                                <strong>Current Status:</strong>
+                                                <% 
+                                                    let validityDate = new Date(voucher.VALIDITY);
+                                                    let today = new Date();
+                                                    let isExpired = validityDate < today;
+                                                %>
+                                                <span class="badge <%= isExpired ? 'bg-danger' : 'bg-success' %> ms-2">
+                                                    <%= isExpired ? 'Expired' : 'Active' %>
+                                                </span>
+                                            </div>
+                                            <div class="small text-muted">
+                                                <i class="bi bi-calendar me-1"></i>
+                                                Valid until: <%= validityDate.toLocaleDateString() %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a class="btn btn-outline-secondary" href="/admin/voucher">
+                                <i class="bi bi-x-circle me-1"></i>Cancel
+                            </a>
+                            <button class="btn text-white" type="submit" style="background-color: #228B22;">
+                                <i class="bi bi-check-circle me-1"></i>UPDATE VOUCHER
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle success/error messages
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
+    
+    if (success) {
+        showMessage(success, 'success');
+    } else if (error) {
+        showMessage(error, 'danger');
+    }
+    
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('messageDiv');
+        const messageText = document.getElementById('messageText');
+        
+        messageDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        messageText.textContent = message;
+        messageDiv.classList.remove('d-none');
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            messageDiv.classList.add('d-none');
+        }, 5000);
+    }
+    
+    // Update discount preview
+    function updateDiscountPreview() {
+        const discount = document.getElementById('discountInput').value;
+        const cap = document.getElementById('capInput').value;
+        const preview = document.getElementById('discountPreview');
+        
+        if (discount && cap) {
+            const orderAmount = 1000;
+            const discountAmount = Math.min((orderAmount * discount / 100), parseInt(cap));
+            const finalAmount = orderAmount - discountAmount;
+            
+            preview.innerHTML = `
+                <div class="text-success">
+                    <strong>Discount: ${discount}% (max ৳${cap})</strong><br>
+                    Discount Amount: ৳${discountAmount}<br>
+                    Final Amount: ৳${finalAmount}
+                </div>
+            `;
+        } else {
+            preview.innerHTML = '<div class="text-muted">Enter discount details to see preview</div>';
+        }
+    }
+    
+    // Add event listeners
+    document.getElementById('discountInput').addEventListener('input', updateDiscountPreview);
+    document.getElementById('capInput').addEventListener('input', updateDiscountPreview);
+    
+    // Initialize preview
+    updateDiscountPreview();
+    
+    // Form validation
+    document.getElementById('voucherForm').addEventListener('submit', function(e) {
+        const name = document.getElementById('nameInput').value.trim();
+        const discount = parseInt(document.getElementById('discountInput').value);
+        const cap = parseInt(document.getElementById('capInput').value);
+        
+        if (!name.match(/^[A-Z0-9]+$/)) {
+            e.preventDefault();
+            showMessage('Voucher name must contain only uppercase letters and numbers', 'danger');
+            return;
+        }
+        
+        if (discount < 1 || discount > 100) {
+            e.preventDefault();
+            showMessage('Discount percentage must be between 1 and 100', 'danger');
+            return;
+        }
+        
+        if (cap < 1) {
+            e.preventDefault();
+            showMessage('Maximum discount amount must be greater than 0', 'danger');
+            return;
+        }
+    });
+</script>

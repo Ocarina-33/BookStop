@@ -1,0 +1,141 @@
+<%let statues = ['PROCESSING','APPROVED','ON SHIPPING','SHIPPED','COMPLETED','CANCELLED','RETURNED'];%>
+<%let statusColors = ['warning','info','primary','success','success','danger','secondary'];%>
+<%let statusIcons = ['clock','check-circle','truck','box-seam','check-circle-fill','x-circle','arrow-return-left'];%>
+
+<% if(items.state == '6' || items.state == '7') { %>
+    <!-- Cancelled/Returned Order Status -->
+    <div class="card-color card-round mt-3 p-4">
+        <div class="text-center">
+            <div class="mb-4">
+                <i class="bi bi-<%=statusIcons[parseInt(items.state)-1]%> display-1 text-<%=statusColors[parseInt(items.state)-1]%>"></i>
+            </div>
+            <h3 class="text-<%=statusColors[parseInt(items.state)-1]%> mb-3">Order <%=statues[parseInt(items.state)-1]%></h3>
+            <% if(items.state == '6') { %>
+                <p class="text-muted mb-4">অর্ডারটি বাতিল করা হয়েছে। যদি আপনার কোনো প্রশ্ন থাকে, দয়া করে আমাদের গ্রাহক সহায়তায় যোগাযোগ করুন। আমরা দুঃখিত এই অসুবিধার জন্য।</p>
+                <div class="alert alert-danger border-0" role="alert">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Refund Information:</strong> যদি পেমেন্ট আগে হয়ে থাকে, তাহলে রিফান্ড ৫-৭ কর্মদিবসের মধ্যে সম্পন্ন করা হবে।
+                </div>
+            <% } else { %>
+                <p class="text-muted mb-4">This order has been returned. The return process is being handled by our team.</p>
+                <div class="alert alert-secondary border-0" role="alert">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Return Status:</strong> Your return request is being processed. Refunds will be issued after item inspection.
+                </div>
+            <% } %>
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-6">
+                    <a href="/My-section/orders" class="btn btn-outline-primary rounded-pill w-100">
+                        <i class="bi bi-arrow-left me-2"></i>Back to My Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } else { %>
+    <!-- Normal Order Delivery Stepper -->
+    <div class="card-color card-round mt-3 p-3 bs-stepper">
+        <h4>Your Order Delivery Information</h4><hr>
+        <div class="bs-stepper-header" role="tablist">
+            <!-- your steps here -->
+            <div class="step" data-target="#logins-part">
+                <span class="bs-stepper-circle">1</span>
+                <span class="bs-stepper-label">Processing</span>
+            </div>
+            <div class="line"></div>
+            <div class="step" data-target="#information-part">
+                <span class="bs-stepper-circle">2</span>
+                <span class="bs-stepper-label">Approved</span>
+            </div>
+            <div class="line"></div>
+            <div class="step " data-target="#information-part">
+                <span class="bs-stepper-circle">3</span>
+                <span class="bs-stepper-label">On Shipping</span>
+            </div>
+            <div class="line"></div>
+            <div class="step " data-target="#information-part">
+                <span class="bs-stepper-circle">4</span>
+                <span class="bs-stepper-label">Shipped</span>
+            </div>
+            <div class="line"></div>
+            <div class="step " data-target="#information-part">
+                <span class="bs-stepper-circle">5</span>
+                <span class="bs-stepper-label">Completed</span>
+            </div>
+        </div>
+    </div>
+<% } %>
+<!-- /.Horizontal Steppers -->
+
+
+<div class="row">
+    <div class="col-3">
+        <div class="card-color card-round mt-3 p-3">
+            <h5><b>Delivery To</b></h5>
+            <hr>
+            <b>Name:</b><br/>
+            <span><%= items.name %></span>
+            <hr>
+            <b>Phone:</b><br/>
+            <span><%= items.phone1 %></span>
+            <hr>
+            <b>Alternative Phone:</b><br/>
+            <span><%= items.phone2 %></span>
+        </div>
+        <div class="card-color card-round mt-3 p-3">
+            <h5><b>Delivery Address</b></h5>
+            <hr>
+            <b>Home:</b><br/>
+            <span><%= items.address %></span>
+        </div>
+        <div class="card-color card-round mt-3 p-3">
+            <h5><b>Order Details</b></h5>
+            <hr>
+            <b>Total Price:</b><br/>
+            <span><%= items.total_price %></span><hr>
+            <b>Total Item:</b><br/>
+            <span><%= items.total_item %></span>
+        </div>
+    </div>
+    <div class="col-9">
+        <section class="card-color card-round mt-3 p-2">
+            <h4>Order Summary</h4>
+            <% for(let i = 0;i < books.length;i++){ %>
+            <hr>
+            <div class="row">
+                <div class="col-2">
+                    <img src=<%= books[i].image %> class="img-fluid"/>
+                </div>
+                <div class="col-4">
+                    <a href=<%="/books/"+books[i].id%> class="text-decoration-none text-primary bold "><h5><%= books[i].name %></h5></a>
+                    <b><%= books[i].author_name %></b>
+                </div>
+                <div class="col-2">
+                    Price: TK.<%= books[i].price %>
+                </div>
+                <div class="col-2">
+                    Qty:<%= books[i].amount %>
+                </div>
+                <div class="col-2">
+                    TK.<%= books[i].amount*books[i].price %>
+                </div>
+            </div>
+
+            <% } %>
+        </section>
+    </div>
+</div>
+
+<script>
+    <% if(items.state != '6' && items.state != '7') { %>
+        let step = <%=items.state%>
+        step--;
+        var elements = document.querySelectorAll('.step');
+        //console.log(elements.length,step);
+        for(let i=0;i<step;i++){
+            elements[i].classList.add('success');
+           // console.log(elements[i]);
+        }
+        elements[step].classList.add('active');
+    <% } %>
+</script>

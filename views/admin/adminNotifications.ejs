@@ -1,0 +1,413 @@
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                <a href="/admin/notifications" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-bell me-2"></i>Notifications
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">
+                <i class="bi bi-bell-fill text-primary me-2"></i>
+                Notification Management
+            </h2>
+            <p class="text-muted mb-0">Send vouchers and notifications to users</p>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <% if (success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            <%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <i class="bi bi-bell display-4 text-primary mb-2"></i>
+                    <h4 class="text-primary"><%= stats.total_notifications %></h4>
+                    <p class="text-muted mb-0">Total Notifications</p>
+                    <small class="text-muted">(Last 30 days)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <i class="bi bi-envelope-open display-4 text-warning mb-2"></i>
+                    <h4 class="text-warning"><%= stats.unread_notifications %></h4>
+                    <p class="text-muted mb-0">Unread Notifications</p>
+                    <small class="text-muted">(All time)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <i class="bi bi-gift display-4 text-success mb-2"></i>
+                    <h4 class="text-success"><%= stats.voucher_notifications %></h4>
+                    <p class="text-muted mb-0">Voucher Notifications</p>
+                    <small class="text-muted">(Last 30 days)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-info">
+                <div class="card-body text-center">
+                    <i class="bi bi-hand-thumbs-up display-4 text-info mb-2"></i>
+                    <h4 class="text-info"><%= stats.welcome_notifications %></h4>
+                    <p class="text-muted mb-0">Welcome Notifications</p>
+                    <small class="text-muted">(Last 30 days)</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Send Voucher to Selected Users -->
+        <div class="col-lg-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-send me-2"></i>
+                        Send Voucher to Users
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/notifications/send-voucher" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Voucher</label>
+                            <select class="form-select" name="voucherId" required>
+                                <option value="">Choose a voucher...</option>
+                                <% vouchers.forEach(voucher => { %>
+                                    <option value="<%= voucher.id %>">
+                                        <%= voucher.name %> - ৳<%= voucher.discount %> off (Max: ৳<%= voucher.cap %>)
+                                    </option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Quick User Selection</label>
+                            <div class="btn-group d-flex" role="group">
+                                <button type="button" class="btn btn-outline-secondary" onclick="selectUsers('all')">All Users</button>
+                                <button type="button" class="btn btn-outline-info" onclick="selectUsers('first-time')">First-time</button>
+                                <button type="button" class="btn btn-outline-warning" onclick="selectUsers('regular')">Regular</button>
+                                <button type="button" class="btn btn-outline-success" onclick="selectUsers('high-value')">High Value</button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Users</label>
+                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="selectAll" onchange="toggleAllUsers()">
+                                    <label class="form-check-label fw-bold" for="selectAll">
+                                        Select All Users
+                                    </label>
+                                </div>
+                                <hr>
+                                <% users.forEach(user => { %>
+                                    <div class="form-check mb-1">
+                                        <input class="form-check-input user-checkbox" type="checkbox" name="userIds" value="<%= user.id %>" id="user<%= user.id %>">
+                                        <label class="form-check-label" for="user<%= user.id %>">
+                                            <%= user.name %>
+                                            <small class="text-muted">
+                                                (<%= user.total_orders || 0 %> orders, ৳<%= user.total_spent || 0 %> spent)
+                                            </small>
+                                        </label>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Notification Title</label>
+                            <input type="text" class="form-control" name="title" placeholder="e.g., Special Voucher for You!" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Message</label>
+                            <textarea class="form-control" name="message" rows="3" placeholder="Write a personalized message..." required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-send me-2"></i>Send Voucher
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Send Welcome Vouchers -->
+        <div class="col-lg-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-hand-thumbs-up me-2"></i>
+                        Send Welcome Vouchers
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        This will send welcome vouchers to users who haven't received one yet.
+                    </div>
+                    
+                    <form action="/admin/notifications/send-welcome-vouchers" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Welcome Voucher</label>
+                            <select class="form-select" name="voucherId" required>
+                                <option value="">Choose a welcome voucher...</option>
+                                <% vouchers.forEach(voucher => { %>
+                                    <option value="<%= voucher.id %>">
+                                        <%= voucher.name %> - ৳<%= voucher.discount %> off (Max: ৳<%= voucher.cap %>)
+                                    </option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Welcome Title</label>
+                            <input type="text" class="form-control" name="title" value="Welcome to BookShop!" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Welcome Message</label>
+                            <textarea class="form-control" name="message" rows="4" required>Welcome to BookStop! 🎉
+
+Thank you for joining our community of book lovers. As a special welcome gift, we're giving you an exclusive voucher to use on your first purchase.
+
+Happy reading!</textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-gift me-2"></i>Send Welcome Vouchers
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow border-0">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightning me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary btn-lg w-100 mb-2" onclick="showUserStats()">
+                                <i class="bi bi-people-fill d-block mb-2 fs-1"></i>
+                                View User Statistics
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="/admin/voucher" class="btn btn-outline-success btn-lg w-100 mb-2">
+                                <i class="bi bi-plus-circle-fill d-block mb-2 fs-1"></i>
+                                Create New Voucher
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="/admin/voucher" class="btn btn-outline-warning btn-lg w-100 mb-2">
+                                <i class="bi bi-list-ul d-block mb-2 fs-1"></i>
+                                Manage Vouchers
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-info btn-lg w-100 mb-2" onclick="refreshStats()">
+                                <i class="bi bi-arrow-clockwise d-block mb-2 fs-1"></i>
+                                Refresh Statistics
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Statistics Modal -->
+<div class="modal fade" id="userStatsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">User Statistics</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="userStatsContent">
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Toggle all users checkbox
+function toggleAllUsers() {
+    const selectAll = document.getElementById('selectAll');
+    const userCheckboxes = document.querySelectorAll('.user-checkbox');
+    
+    userCheckboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+}
+
+// Select users by criteria
+function selectUsers(criteria) {
+    // First uncheck all
+    document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = false);
+    document.getElementById('selectAll').checked = false;
+    
+    if (criteria === 'all') {
+        document.getElementById('selectAll').checked = true;
+        toggleAllUsers();
+        return;
+    }
+    
+    // Fetch filtered users
+    fetch(`/admin/notifications/api/users?criteria=${criteria}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            data.users.forEach(user => {
+                const checkbox = document.getElementById(`user${user.id}`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Show user statistics
+function showUserStats() {
+    const modal = new bootstrap.Modal(document.getElementById('userStatsModal'));
+    modal.show();
+    
+    // Load user statistics
+    fetch('/admin/notifications/api/users')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const totalUsers = data.users.length;
+            const firstTimeUsers = data.users.filter(u => (u.total_orders || 0) === 0).length;
+            const regularUsers = data.users.filter(u => (u.total_orders || 0) > 0).length;
+            const highValueUsers = data.users.filter(u => parseFloat(u.total_spent || 0) > 1000).length;
+            
+            document.getElementById('userStatsContent').innerHTML = `
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="card border-primary">
+                            <div class="card-body">
+                                <h3 class="text-primary">${totalUsers}</h3>
+                                <p class="text-muted mb-0">Total Users</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-info">
+                            <div class="card-body">
+                                <h3 class="text-info">${firstTimeUsers}</h3>
+                                <p class="text-muted mb-0">First-time Users</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-warning">
+                            <div class="card-body">
+                                <h3 class="text-warning">${regularUsers}</h3>
+                                <p class="text-muted mb-0">Regular Users</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-success">
+                            <div class="card-body">
+                                <h3 class="text-success">${highValueUsers}</h3>
+                                <p class="text-muted mb-0">High Value Users</p>
+                                <small class="text-muted">(>৳1000 spent)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        document.getElementById('userStatsContent').innerHTML = `
+            <div class="alert alert-danger">
+                Error loading user statistics: ${error.message}
+            </div>
+        `;
+    });
+}
+
+// Refresh statistics
+function refreshStats() {
+    location.reload();
+}
+
+// Auto-dismiss alerts after 5 seconds
+setTimeout(() => {
+    document.querySelectorAll('.alert-dismissible').forEach(alert => {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+    });
+}, 5000);
+</script>
+
+        </div>
+    </div>
+</div>

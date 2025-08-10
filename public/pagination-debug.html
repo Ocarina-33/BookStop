@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagination Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Direct Pagination Test</h2>
+        
+        <div class="mb-3">
+            <h4>Test: Page 4 of 75</h4>
+            <div id="paginationTest" data-pages="75" data-page="4" data-href="/books?page=" data-query=""></div>
+        </div>
+        
+        <div class="mb-3">
+            <h4>Test: Page 1 of 75</h4>
+            <div id="paginationTest1" data-pages="75" data-page="1" data-href="/books?page=" data-query=""></div>
+        </div>
+        
+        <div class="mb-3">
+            <h4>Test: Page 37 of 75</h4>
+            <div id="paginationTest37" data-pages="75" data-page="37" data-href="/books?page=" data-query=""></div>
+        </div>
+    </div>
+
+    <script>
+        // Direct copy of the current pagination.js logic
+        function createPagination(pages, page, target, queryParam) {
+            console.log('Creating pagination for page', page, 'of', pages);
+            let str = '<ul class="pagination">';
+            let active;
+            let pageCutLow = page - 1;
+            let pageCutHigh = page + 1;
+            
+            // Helper function to build URL with query parameters
+            function buildUrl(pageNum) {
+                return target + pageNum + queryParam;
+            }
+            
+            // Show the Previous button only if you are on a page other than the first
+            if (page > 1) {
+                str += '<li class="page-item previous no"><a class="page-link" href="' + buildUrl(page-1) + '">Previous</a></li>';
+            }
+            // Show all the pagination elements if there are less than 6 pages total
+            if (pages < 6) {
+                for (let p = 1; p <= pages; p++) {
+                    active = (page === p ? " active" : " no");
+                    str += '<li class="page-item '+active+'"><a class="page-link" href="' + buildUrl(p) + '">'+ p +'</a></li>';
+                }
+            }
+            // Use "..." to collapse pages outside of a certain range
+            else {
+                // Show the very first page followed by a "..." at the beginning of the
+                // pagination section (after the Previous button)
+                if (page > 2) {
+                    str += '<li class="no page-item"><a class="page-link" href="' + buildUrl(1) + '">1</a></li>';
+                    if (page > 3) {
+                        str += '<li class="out-of-range"><span class="page-link">...</span></li>';
+                    }
+                }
+                // Determine how many pages to show after the current page index
+                if (page === 1) {
+                    pageCutHigh += 2;
+                } else if (page === 2) {
+                    pageCutHigh += 1;
+                }
+                // Determine how many pages to show before the current page index
+                if (page === pages) {
+                    pageCutLow -= 2;
+                } else if (page === pages-1) {
+                    pageCutLow -= 1;
+                }
+                // Output the indexes for pages that fall inside the range of pageCutLow
+                // and pageCutHigh
+                for (let p = pageCutLow; p <= pageCutHigh; p++) {
+                    if (p === 0) {
+                        p += 1;
+                    }
+                    if (p > pages) {
+                        continue
+                    }
+                    active = page == p ? "active" : "no";
+                    str += '<li class="page-item '+active+'"><a class="page-link" href="' + buildUrl(p) + '">'+ p +'</a></li>';
+                }
+                // Show the very last page preceded by a "..." at the end of the pagination
+                // section (before the Next button)
+                console.log('pageCutHigh:', pageCutHigh, 'pages:', pages);
+                if (pageCutHigh < pages) {
+                    // Only show ellipsis if there's a gap between the current range and the last page
+                    if (pageCutHigh < pages - 1) {
+                        str += '<li class="out-of-range"><span class="page-link">...</span></li>';
+                        console.log('Added ellipsis');
+                    }
+                    // Always show the last page if we're not already showing it in the range
+                    str += '<li class="page-item no"><a class="page-link" href="' + buildUrl(pages) + '">'+pages+'</a></li>';
+                    console.log('Added last page:', pages);
+                } else {
+                    console.log('Last page not added because pageCutHigh >= pages');
+                }
+            }
+            // Show the Next button only if you are on a page other than the last
+            if (page < pages) {
+                str += '<li class="page-item next no"><a class="page-link" href="' + buildUrl(page+1) + '">Next</a></li>';
+            }
+            str += '</ul>';
+            
+            return str;
+        }
+
+        // Test different scenarios
+        document.getElementById('paginationTest').innerHTML = createPagination(75, 4, '/books?page=', '');
+        document.getElementById('paginationTest1').innerHTML = createPagination(75, 1, '/books?page=', '');
+        document.getElementById('paginationTest37').innerHTML = createPagination(75, 37, '/books?page=', '');
+    </script>
+</body>
+</html>

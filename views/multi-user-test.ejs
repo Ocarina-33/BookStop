@@ -1,0 +1,241 @@
+<!-- Test page for multiple user sessions -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-User Session Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { border: 1px solid #ccc; margin: 10px 0; padding: 15px; }
+        .user-info { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .login-form { background: #e6f3ff; padding: 15px; margin: 10px 0; }
+        .debug-info { background: #fff3cd; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .logout-btn { background: #dc3545; color: white; border: none; }
+        .login-btn { background: #007bff; color: white; border: none; }
+        .refresh-btn { background: #28a745; color: white; border: none; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+        .current-user { background: #d4edda; border: 1px solid #c3e6cb; }
+        .warning { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Multi-User Session Test</h1>
+    
+    <div class="warning">
+        <strong>Great News!</strong> This application now supports multiple users in the same browser! 🎉
+        <ul>
+            <li>✅ <strong>Login with different users in the same browser</strong> - each gets their own session</li>
+            <li>✅ <strong>Switch between user sessions</strong> using the session switcher below</li>
+            <li>✅ <strong>Independent sessions</strong> - each user maintains their own cart, profile, etc.</li>
+        </ul>
+        <p><strong>How it works:</strong> Each user gets a unique session ID, and you can switch between them without logging out.</p>
+    </div>
+
+    <div class="test-section current-user">
+        <h2>Current User Session</h2>
+        <div class="user-info">
+            <% if (user) { %>
+                <p><strong>Logged in as:</strong> <%= user.name %> (<%= user.email %>)</p>
+                <p><strong>User ID:</strong> <%= user.id %></p>
+                <% if (user.sessionId) { %>
+                    <p><strong>Session ID:</strong> <%= user.sessionId %></p>
+                <% } %>
+                <form action="/logout" method="post" style="display: inline;">
+                    <button type="submit" class="logout-btn">Logout Current Session</button>
+                </form>
+            <% } else { %>
+                <p><strong>No user logged in</strong></p>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Session Switcher</h2>
+        <div id="session-switcher">
+            <button onclick="loadSessions()" class="refresh-btn">Load All Sessions</button>
+            <button onclick="clearAllSessions()" class="logout-btn">Clear All Sessions (Reset)</button>
+            <div id="sessions-list"></div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Users - Login Forms</h2>
+        
+        <div class="login-form">
+            <h3>User 1: Eren</h3>
+            <form action="/login" method="post">
+                <input type="email" name="email" value="eren@gmail.com" placeholder="Email" required>
+                <input type="password" name="password" value="123456" placeholder="Password" required>
+                <button type="submit" class="login-btn">Login as Eren</button>
+            </form>
+        </div>
+
+        <div class="login-form">
+            <h3>User 2: Miku</h3>
+            <form action="/login" method="post">
+                <input type="email" name="email" value="miku@gmail.com" placeholder="Email" required>
+                <input type="password" name="password" value="123456" placeholder="Password" required>
+                <button type="submit" class="login-btn">Login as Miku</button>
+            </form>
+        </div>
+
+        <div class="login-form">
+            <h3>User 3: Test User</h3>
+            <form action="/login" method="post">
+                <input type="email" name="email" value="test@gmail.com" placeholder="Email" required>
+                <input type="password" name="password" value="123456" placeholder="Password" required>
+                <button type="submit" class="login-btn">Login as Test User</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Actions</h2>
+        <a href="/books" target="_blank">
+            <button class="refresh-btn">Search Books (New Tab)</button>
+        </a>
+        <a href="/debug/session" target="_blank">
+            <button class="refresh-btn">View Session Debug Info</button>
+        </a>
+        <a href="/debug/users" target="_blank">
+            <button class="refresh-btn">View All Users</button>
+        </a>
+        <button onclick="location.reload()" class="refresh-btn">Refresh This Page</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Testing Instructions</h2>
+        <ol>
+            <li><strong>Step 1:</strong> Login with different users using the forms above</li>
+            <li><strong>Step 2:</strong> Use the "Load All Sessions" button to see all active sessions</li>
+            <li><strong>Step 3:</strong> Click on any session to switch to that user</li>
+            <li><strong>Step 4:</strong> Search for books and verify the user remains the same</li>
+            <li><strong>Step 5:</strong> Switch back to other sessions and verify they're independent</li>
+        </ol>
+        
+        <h3>What Should Happen:</h3>
+        <ul>
+            <li>✅ Each user login creates a new session (you can have multiple sessions)</li>
+            <li>✅ Switching sessions changes the active user without losing other sessions</li>
+            <li>✅ Searching for books maintains the current active session</li>
+            <li>✅ Each session has independent cart, profile, etc.</li>
+        </ul>
+
+        <h3>New Features:</h3>
+        <ul>
+            <li>🆕 <strong>Session Isolation:</strong> Multiple users can be logged in simultaneously</li>
+            <li>🆕 <strong>Session Switching:</strong> Switch between users without re-logging in</li>
+            <li>🆕 <strong>Session Persistence:</strong> Sessions persist across page refreshes</li>
+        </ul>
+    </div>
+
+    <div class="debug-info">
+        <h3>Debug Information</h3>
+        <p><strong>Browser:</strong> <span id="browser-info"></span></p>
+        <p><strong>Current URL:</strong> <span id="current-url"></span></p>
+        <p><strong>Timestamp:</strong> <span id="timestamp"></span></p>
+    </div>
+
+    <script>
+        // Fill debug information
+        document.getElementById('browser-info').textContent = navigator.userAgent;
+        document.getElementById('current-url').textContent = window.location.href;
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+
+        // Load and display all sessions
+        async function loadSessions() {
+            try {
+                const response = await fetch('/debug/sessions');
+                const data = await response.json();
+                
+                const sessionsList = document.getElementById('sessions-list');
+                
+                if (data.allSessions.length === 0) {
+                    sessionsList.innerHTML = '<p>No active sessions found. Please login first.</p>';
+                    return;
+                }
+                
+                let html = '<h4>Active Sessions:</h4>';
+                data.allSessions.forEach(session => {
+                    const isActive = session.isActive ? ' (ACTIVE)' : '';
+                    const buttonClass = session.isActive ? 'logout-btn' : 'login-btn';
+                    
+                    html += `
+                        <div style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; ${session.isActive ? 'background-color: #d4edda;' : ''}">
+                            <strong>${session.userName}</strong> (${session.userEmail})${isActive}<br>
+                            <small>Session ID: ${session.sessionId}</small><br>
+                            <button onclick="switchSession('${session.sessionId}')" class="${buttonClass}">
+                                ${session.isActive ? 'Current Session' : 'Switch to this Session'}
+                            </button>
+                        </div>
+                    `;
+                });
+                
+                sessionsList.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+                document.getElementById('sessions-list').innerHTML = '<p>Error loading sessions</p>';
+            }
+        }
+        
+        // Switch to a different session
+        async function switchSession(sessionId) {
+            try {
+                const response = await fetch('/debug/switch-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ sessionId: sessionId })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    // Refresh the page to show the new session
+                    window.location.reload();
+                } else {
+                    alert('Failed to switch session: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error switching session:', error);
+                alert('Error switching session');
+            }
+        }
+
+        // Clear all sessions
+        async function clearAllSessions() {
+            if (confirm('Are you sure you want to clear all sessions? This will log out all users.')) {
+                try {
+                    const response = await fetch('/debug/clear-sessions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        alert(`Cleared ${result.clearedCount} sessions`);
+                        window.location.reload();
+                    } else {
+                        alert('Failed to clear sessions');
+                    }
+                } catch (error) {
+                    console.error('Error clearing sessions:', error);
+                    alert('Error clearing sessions');
+                }
+            }
+        }
+
+        // Auto-refresh timestamp every 5 seconds
+        setInterval(() => {
+            document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        }, 5000);
+
+        // Auto-load sessions when page loads
+        window.addEventListener('load', loadSessions);
+    </script>
+</body>
+</html>

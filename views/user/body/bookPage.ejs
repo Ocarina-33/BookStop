@@ -1,0 +1,541 @@
+<script>
+    // Ensure fresh book ID on each page load
+    let ID = '<%= book.id %>';
+    console.log('Book page loaded - ID:', ID, 'Book:', '<%= book.name %>');
+
+    // Add modern button styles and animations
+    const style = document.createElement('style');
+    style.textContent = `
+        .modern-cart-btn:hover {
+            background-color: #e68a00 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 153, 0, 0.4) !important;
+        }
+
+        .modern-cart-btn:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 8px rgba(255, 153, 0, 0.3) !important;
+        }
+
+        .modern-cart-btn:hover .cart-icon {
+            transform: scale(1.1);
+        }
+
+        .modern-cart-btn:disabled {
+            background-color: #cc7a00 !important;
+            opacity: 0.7;
+            transform: none !important;
+            cursor: not-allowed;
+        }
+
+        /* Enhanced Out of Stock Toast Styling */
+        #out-of-stock-toast-id {
+            animation: outOfStockPulse 0.6s ease-in-out;
+            border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        @keyframes outOfStockPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        #out-of-stock-toast-id .bi-exclamation-triangle-fill {
+            animation: warningBounce 2s infinite;
+        }
+
+        @keyframes warningBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Add backdrop blur effect */
+        #out-of-stock-toast-id.show {
+            backdrop-filter: blur(2px);
+        }
+
+        /* Out of Stock Button Animation */
+        @keyframes outOfStockGlow {
+            0% {
+                box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            }
+            100% {
+                box-shadow: 0 4px 20px rgba(220, 53, 69, 0.6), 0 0 20px rgba(220, 53, 69, 0.4);
+            }
+        }
+
+        .out-of-stock-btn:hover {
+            background: linear-gradient(45deg, #dc3545, #c82333) !important;
+            transform: none !important;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Quantity selector functionality - REMOVED (quantity control only in cart)
+    
+    function makePUTrequest(event) {
+        // Get the actual button element (might be clicked on child elements)
+        const button = event.target.closest('.modern-cart-btn');
+        const buttonBookId = button.getAttribute('data-book-id');
+        const currentID = buttonBookId || '<%= book.id %>';
+        
+        console.log('🛒 Adding to cart - Book ID:', currentID, 'Quantity: 1');
+        
+        // Simply disable button to prevent double clicks
+        button.disabled = true;
+        
+        // Function to restore button
+        function restoreButton() {
+            button.disabled = false;
+        }
+        
+        $.ajax({
+            url: `/cart/${currentID}`,
+            type: 'POST',
+            data: { quantity: 1 },
+            success: function(response) {
+                console.log('✅ Item added successfully');
+                var successToast = document.getElementById('add-to-cart-success-toast-id');
+                if (successToast) {
+                    var toast = new bootstrap.Toast(successToast, {
+                        autohide: true,
+                        delay: 3000
+                    });
+                    toast.show();
+                }
+                restoreButton();
+            },
+            error: function(xhr, status, error) {
+                console.log('❌ Error occurred:', xhr.status, error);
+                console.log('❌ Response Text:', xhr.responseText);
+                
+                if (xhr.status === 409) {
+                    console.log('⚠️ Item already in cart');
+                    var errorToast = document.getElementById('add-to-cart-error-toast-id');
+                    if (errorToast) {
+                        var toast = new bootstrap.Toast(errorToast, {
+                            autohide: true,
+                            delay: 4000
+                        });
+                        toast.show();
+                    }
+                } else if (xhr.status === 400) {
+                    console.log('❌ Stock error');
+                    try {
+                        const errorData = JSON.parse(xhr.responseText);
+                        console.log('❌ Error data:', errorData);
+                        // Show out of stock toast instead of alert
+                        var outOfStockToast = document.getElementById('out-of-stock-toast-id');
+                        if (outOfStockToast) {
+                            var toast = new bootstrap.Toast(outOfStockToast, {
+                                autohide: true,
+                                delay: 5000
+                            });
+                            toast.show();
+                        }
+                    } catch (e) {
+                        console.log('❌ Error parsing response:', e);
+                        // Show out of stock toast instead of alert
+                        var outOfStockToast = document.getElementById('out-of-stock-toast-id');
+                        if (outOfStockToast) {
+                            var toast = new bootstrap.Toast(outOfStockToast, {
+                                autohide: true,
+                                delay: 5000
+                            });
+                            toast.show();
+                        }
+                    }
+                } else if (xhr.status === 401) {
+                    console.log('❌ Authentication error');
+                    alert('Please log in to add items to cart.');
+                    window.location.href = '/login';
+                } else {
+                    console.log('❌ Unexpected error:', xhr.status, error);
+                    console.log('❌ Full response:', xhr);
+                    alert('An error occurred. Please try again. Status: ' + xhr.status);
+                }
+                
+                restoreButton();
+            }
+        });
+    }
+</script>
+
+
+<nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';" xmlns="http://www.w3.org/1999/html">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/books">Books</a></li>
+        <li class="breadcrumb-item active"><%= book.name %></li>
+    </ol>
+</nav>
+<div class="row shadow m-0 mb-4 p-3">
+    <div class="col-9">
+        <div class="row no-gutters">
+            <div class="col-4 mt-3">
+                <img class="img-thumbnail" src=<%= book.image %>>
+            </div>
+            <div class="col mt-4">
+                <h3 class=""><%= book.name %></h3>
+                <p>by - <a href=<%= '/authors/' + book.author_id %>><%= book.author_name %></a></p>
+
+                <%if(book.genre){%>
+                    <% let bookgenre = book.genre.split(','); %>
+                    Category:
+                    <%for(let genre=0;genre<bookgenre.length;genre++){ %>
+
+                        <span class="badge bg-warning text-black">
+                            <a class="text-decoration-none text-black" href=<%="/genres/search?genre="+encodeURIComponent(bookgenre[genre].trim())%>>
+                            <%=bookgenre[genre]%>
+                            </a>
+                        </span>
+
+                    <%}%>
+                <br/>
+                <%}%>
+                <h4>TK. <%= book.price %></h4>
+                <% if(book.stock > 0){ %>
+                    <small class="text-success"><i class="bi bi-check-circle"></i> In Stock (<%= book.stock %> available)</small>
+                <% }else{ %>
+                    <div class="alert alert-danger d-inline-block px-3 py-2 mb-2" style="border-radius: 10px; border: none; background: linear-gradient(45deg, #c91123, #801923); color: white; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);">
+                        <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
+                        <strong>Currently Out of Stock</strong>
+                    </div>
+                <% } %>
+                <br/><br/>
+                <% if(book.stock !== 0){ %>
+                    <button class="btn btn-lg modern-cart-btn" onclick="makePUTrequest(event)"
+                            data-book-id="<%= book.id %>"
+                            style="background-color: #ff9900; color: white; border: none; border-radius: 12px; 
+                                   padding: 12px 24px; font-weight: 600; font-size: 16px;
+                                   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                                   box-shadow: 0 4px 12px rgba(255, 153, 0, 0.3);
+                                   position: relative;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                             class="me-2 cart-icon" viewBox="0 0 16 16" style="transition: transform 0.3s ease;">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                        </svg>
+                        <span>Add to Cart</span>
+                    </button>
+                <% }else{ %>
+                    <button disabled class="btn btn-lg out-of-stock-btn" 
+                            style="background: linear-gradient(45deg, #dc3545, #c82333); 
+                                   color: white; border: none; border-radius: 12px; 
+                                   padding: 12px 24px; font-weight: 600; font-size: 16px;
+                                   box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+                                   position: relative; cursor: not-allowed;
+                                   animation: outOfStockGlow 2s infinite alternate;">
+                        <i class="bi bi-exclamation-triangle-fill me-2 text-warning" style="font-size: 18px;"></i>
+                        <span>Out of Stock</span>
+                    </button>
+                <% } %>
+                <br/>
+
+                <% if(hasAddedWish){ %>
+                    <a href=<%= "/books/list/toggle/" + book.id %> class="btn btn-outline-danger mt-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-heartbreak" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                              d="M8.867 14.41c13.308-9.322 4.79-16.563.064-13.824L7 3l1.5 4-2 3L8 15a38.094 38.094 0 0 0 .867-.59Zm-.303-1.01c6.164-4.4 6.91-7.982 6.22-9.921C14.031 1.37 11.447.42 9.587 1.368L8.136 3.18l1.3 3.468a1 1 0 0 1-.104.906l-1.739 2.608.971 3.237Zm-1.25 1.137a36.027 36.027 0 0 1-1.522-1.116C-5.077 4.97 1.842-1.472 6.454.293c.314.12.618.279.904.477L5.5 3 7 7l-1.5 3 1.815 4.537Zm-2.3-3.06C.895 7.797.597 4.875 1.308 3.248c.756-1.73 2.768-2.577 4.456-2.127L4.732 2.36a1 1 0 0 0-.168.991L5.91 6.943l-1.305 2.61a1 1 0 0 0-.034.818l.442 1.106Z"/>
+                    </svg>
+                    Remove from wish list
+                    </a>
+                <% }else{ %>
+                    <a href="<%= "/books/list/toggle/" + book.id %>" class="btn btn-danger mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-heart-fill" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                        </svg>
+                        Add to wish list
+                    </a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="col-3 sidebar-info p-2 bg-light">
+        <div class="payment-info">
+            <div class="d-flex mt-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" fill="currentColor"
+                     class="bi bi-wallet2" viewBox="0 0 16 16">
+                    <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"/>
+                </svg>
+                <p class="text-capitalize ms-3">Cash on delivery</p>
+            </div>
+            <div class="d-flex mt-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" fill="currentColor"
+                     class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                </svg>
+                <p class="text-capitalize ms-3">7 days happy return</p>
+            </div>
+            <div class="d-flex mt-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" fill="currentColor"
+                     class="bi bi-truck" viewBox="0 0 16 16">
+                    <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                </svg>
+                <p class="text-capitalize ms-3">Delivery Charge <br/> Tk. 50 (Online)
+                    <a href="#" class="btn btn-link details-tooltip px-0" data-toggle="tooltip" data-placement="top"
+                       title="যে কোন পরিমাণ পণ্য অর্ডার করলেই সারাদেশে আমাদের ডেলিভারি চার্জ অনলাইন অর্ডারে 50(Online order) টাকা ">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </a>
+                </p>
+            </div>
+            <!-- <div class="d-flex info">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" fill="currentColor"
+                     class="bi bi-currency-exchange" viewBox="0 0 16 16">
+                    <path d="M0 5a5.002 5.002 0 0 0 4.027 4.905 6.46 6.46 0 0 1 .544-2.073C3.695 7.536 3.132 6.864 3 5.91h-.5v-.426h.466V5.05c0-.046 0-.093.004-.135H2.5v-.427h.511C3.236 3.24 4.213 2.5 5.681 2.5c.316 0 .59.031.819.085v.733a3.46 3.46 0 0 0-.815-.082c-.919 0-1.538.466-1.734 1.252h1.917v.427h-1.98c-.003.046-.003.097-.003.147v.422h1.983v.427H3.93c.118.602.468 1.03 1.005 1.229a6.5 6.5 0 0 1 4.97-3.113A5.002 5.002 0 0 0 0 5zm16 5.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0zm-7.75 1.322c.069.835.746 1.485 1.964 1.562V14h.54v-.62c1.259-.086 1.996-.74 1.996-1.69 0-.865-.563-1.31-1.57-1.54l-.426-.1V8.374c.54.06.884.347.966.745h.948c-.07-.804-.779-1.433-1.914-1.502V7h-.54v.629c-1.076.103-1.808.732-1.808 1.622 0 .787.544 1.288 1.45 1.493l.358.085v1.78c-.554-.08-.92-.376-1.003-.787H8.25zm1.96-1.895c-.532-.12-.82-.364-.82-.732 0-.41.311-.719.824-.809v1.54h-.005zm.622 1.044c.645.145.943.38.943.796 0 .474-.37.8-1.02.86v-1.674l.077.018z"/>
+                </svg>
+                <p class="text-capitalize ms-3">Purchase &amp; Earn
+                    <a href="#" class="btn btn-link details-tooltip px-0" data-toggle="tooltip" data-placement="top"
+                       title="প্রতি সফল কেনাকাটায় রেজিস্টার্ড ইউজার পাচ্ছেন পয়েন্টস। পয়েন্টস BookStop ব্যালেন্স এ জমা করে  কিনতে পারছেন যে কোনো পণ্য।">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </a>
+                </p>
+            </div> -->
+        </div>
+
+    </div>
+</div>
+
+
+<div class="shadow p-5 mt-3">
+    <h3>Product Specification & Summary</h3>
+    <ul class="nav nav-tabs">
+        <li class="nav-item active">
+            <a href="#home" class="nav-link active" data-bs-toggle="tab">Summary</a>
+        </li>
+        <li class="nav-item">
+            <a href="#profile" class="nav-link" data-bs-toggle="tab">Specification</a>
+        </li>
+        <li class="nav-item">
+            <a href="#messages" class="nav-link" data-bs-toggle="tab">Author</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="home">
+            <p> <%=book.summary%></p>
+        </div>
+        <div class="tab-pane fade" id="profile">
+            <table class="table table-hover">
+                <tbody>
+                <tr>
+                    <th>Title</th>
+                    <td><%= book.name %></td>
+                </tr>
+                <tr>
+                    <th>Author</th>
+                    <td><a href=<%="/authors/"+book.author_id%> class="text-decoration-none"><%= book.author_name %></a></td>
+                </tr>
+                <tr>
+                    <th>Publisher</th>
+                    <td><a href=<%="/publishers/"+book.publisher_id%> class="text-decoration-none"><%= book.publisher_name %></a></td>
+                </tr>
+                <tr>
+                    <th>ISBN</th>
+                    <td><%= book.isbn %></td>
+                </tr>
+                <tr>
+                    <th>Edition</th>
+                    <td><%= book.edition %></td>
+                </tr>
+                <tr>
+                    <th>Number of Pages</th>
+                    <td><%= book.page %></td>
+                </tr>
+                <tr>
+                    <th>Language</th>
+                    <td><%= book.language %></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="messages">
+            <div class="row align-items-start p-4">
+                <div class="col-md-3 col-sm-4 text-center mb-3">
+                    <img class="circular img-fluid" 
+                         src="<%= book.author_image %>" 
+                         alt="<%= book.author_name %>"
+                         style="width: 150px; height: 150px; object-fit: cover;">
+                </div>
+                <div class="col-md-9 col-sm-8">
+                    <h3 class="mb-3 text-primary fw-bold"><%= book.author_name %></h3>
+                    <div class="author-description" style="line-height: 1.6; font-size: 0.95rem;">
+                        <%= book.author_description %>
+                    </div>
+                    <div class="mt-3">
+                        <a href="/authors/<%= book.author_id %>" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-person-circle me-1"></i>
+                            View Author Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+
+<!--Add review section-->
+<div class="shadow mt-4 p-5">
+    <h3>Reviews and Ratings</h3>
+    <div class="p-3  d-flex justify-content-between align-items-center">
+
+        <div class="d-flex ">
+            <span style="font-size: 42px;">
+                <%= Math.round(parseFloat(book.stars)) %>
+            </span>
+            <div class="m-2">
+                <span class="text-secondary">
+                    <%= book.review_count %> Ratings and Reviews
+                </span> <br/>
+                <span class="ml-0">
+                    <% for(let stars = 0; stars < Math.round(parseFloat(book.stars)); stars++){ %>
+                        ⭐
+                    <% } %>
+                </span>
+            </div>
+        </div>
+
+        <div class="ratings-review__content--form">
+            <button class="btn btn-outline-primary" id="writeReviewBtn" onclick="toggleReview()">Write a Review</button>
+        </div>
+    </div>
+    <div class="p-3 d-none" id="ratings_reviews_form">
+        <form class="js--review-form" action="/reviews" method="POST">
+            <div class="form-group">
+                <input type="hidden" name="bookId" id="bookId" value=<%= book.id %>>
+                <textarea required maxlength="500" name="review" class="form-control" id="js--review-writing" rows="3"
+                          placeholder="Please write your honest opinion and give a rating"></textarea>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="rating">
+                    <input required type="radio" name="rating" value="5" id="5">
+                    <label for="5">☆</label>
+                    <input type="radio" name="rating" value="4" id="4">
+                    <label for="4">☆</label>
+                    <input type="radio" name="rating" value="3" id="3">
+                    <label for="3">☆</label>
+                    <input type="radio" name="rating" value="2" id="2">
+                    <label for="2">☆</label>
+                    <input type="radio" name="rating" value="1" id="1">
+                    <label for="1">☆</label>
+                </div>
+                <button class="btn btn-outline-primary" type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+    <% for(let i = 0;i < reviews.length;i++){ %>
+        <hr>
+        <div class="review">
+            <div class="d-flex align-items-center mb-2">
+                <img class="img-fluid circular me-2" width="48px"
+                     src="<%=reviews[i].IMAGE%>"
+                     alt="user-img">
+                <div>
+                    <div class="name-date">
+                        <span class="d-inline-block name">By <strong><%= reviews[i].NAME %></strong> </span>,
+                        <span class="date d-inline-block"> <%= reviews[i].CREATED_AT %></span>
+                    </div>
+                    <div class="stars mr-2">
+                        <% for(let stars = 0;stars < reviews[i].STARS;stars++){ %>
+                            ⭐
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            <div class="review-content">
+                <p><%= reviews[i].REVIEW %></p>
+            </div>
+
+        </div>
+
+    <% } %>
+</div>
+<!--PopUps-->
+
+<!-- Custom Out of Stock Toast with Prominent Styling -->
+<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 9999;">
+    <div id="out-of-stock-toast-id" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true" 
+         style="background: linear-gradient(45deg, #dc3545, #ff6b6b); color: white; box-shadow: 0 8px 32px rgba(220, 53, 69, 0.4); border-radius: 15px; min-width: 350px;">
+        <div class="d-flex">
+            <div class="toast-body d-flex align-items-center p-4">
+                <div class="me-3">
+                    <i class="bi bi-exclamation-triangle-fill fs-1 text-warning" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1 fw-bold">Out of Stock!</h5>
+                    <p class="mb-0 opacity-90">This book is currently out of stock. Please check back later or explore similar titles.</p>
+                </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-3 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<%- include('components/toast',{successToastId:'add-to-cart-success-toast-id',successToastMessage:'Successfully added to your cart',errorToastId:'add-to-cart-error-toast-id',errorToastMessage:'You have already added it in your cart'}) %>
+<%- include('components/toast',{successToastId:'write-review-success-toast-id',successToastMessage:'',errorToastId:'write-review-error-toast-id',errorToastMessage:'You can\'t write reviews of books you didn\'t buy!'}) %>
+<%- include('components/toast',{successToastId:'write-review-2-success-toast-id',successToastMessage:'',errorToastId:'write-review-2-error-toast-id',errorToastMessage:'You have already reviewed this book!'}) %>
+
+
+<script>
+    let canReview =  <%- canReview %>;
+    let hasReviewd =  <%- hasReviewd %>;
+
+    //console.log(hasReviewd);
+
+    function toggleReview() {
+        if (!canReview) {
+            var toastLiveExample = document.getElementById('write-review-error-toast-id')
+            var toast = new bootstrap.Toast(toastLiveExample)
+            toast.show();
+            return;
+        }
+        if (hasReviewd) {
+            var toastLiveExample = document.getElementById('write-review-2-error-toast-id')
+            var toast = new bootstrap.Toast(toastLiveExample)
+            toast.show();
+            return;
+        }
+        document.getElementById("writeReviewBtn").classList.toggle('d-none');
+        document.getElementById("ratings_reviews_form").classList.toggle('d-none');
+    }
+
+</script>
+<!--<script>-->
+<!--    var toastTrigger = document.getElementById('liveToastBtn')-->
+<!--    var toastLiveExample = document.getElementById('liveToast')-->
+<!--    if (toastTrigger) {-->
+<!--        toastTrigger.addEventListener('click', function (id) {-->
+<!--            var toast = new bootstrap.Toast(toastLiveExample)-->
+<!--            console.log(id,"sdfsdf");-->
+<!--            toast.show()-->
+<!--        })-->
+<!--    }-->
+<!--    function makePUTreques3t() {-->
+<!--        console.log("baaaaaaaaaaaaaaaaaaa");-->
+<!--    }-->
+<!--</script>-->

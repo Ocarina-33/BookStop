@@ -1,0 +1,56 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Authors</li>
+    </ol>
+</nav>
+
+<style>
+.author-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.author-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.author-card img {
+    transition: transform 0.3s ease;
+}
+
+.author-card:hover img {
+    transform: scale(1.05);
+}
+</style>
+
+<h6>(Showing <%=start+1%> to <%=start+authors.length%> of <%=cnt%> authors)</h6>
+<div class="d-flex flex-wrap justify-content-evenly">
+    <% for(let i = 0;i < authors.length;i++){ %>
+
+    <div class="card author-card mb-3 m-1" style="width: 15rem;">
+        <img class="card-img-top p-3" src="<%= authors[i].image %>" alt="<%= authors[i].name %>" style="height: 250px; object-fit: cover;">
+        <div class="card-body text-center">
+            <h5 class="card-title" style="color: #266dd3;font-weight: 650;"><%= authors[i].name %></h5>
+            <p class="card-text text-muted"><%= authors[i].book_count %> Books</p>
+            <% if(authors[i].description && authors[i].description.length > 100) { %>
+                <p class="card-text"><%= authors[i].description.substring(0, 100) %>...</p>
+            <% } else { %>
+                <p class="card-text"><%= authors[i].description || 'No description available.' %></p>
+            <% } %>
+            <div class="d-grid gap-2">
+                <a href="<%= '/authors/' + authors[i].id %>" class="btn btn-primary">
+                    <i class="bi bi-person"></i>
+                    View Author
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <% } %>
+    <br/>
+</div>
+
+<div style="margin: auto" id="paginationDiv" data-pages="<%=pages%>" data-page="<%=page%>" data-href="<%=target%>"></div>
+<script async src="/scripts/pagination.js"></script>

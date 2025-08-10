@@ -1,0 +1,95 @@
+
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <h3 class="card-title" style="color: #8B4513;">
+                        <i class="bi bi-plus-circle me-2"></i>Add New Author
+                    </h3>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form action="/admin/author/add" method="post">
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-info-circle me-2"></i>Basic Information
+                        </h4>
+                        <div class="mb-3">
+                            <label for="nameInput" class="form-label fw-semibold">Author Name *</label>
+                            <input type="text" name="name" class="form-control" id="nameInput" 
+                                   placeholder="Enter the author's full name..." required>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-image me-2"></i>Author Image
+                        </h4>
+                        <div class="mb-3">
+                            <label for="imageInput" class="form-label fw-semibold">Image URL</label>
+                            <input type="url" name="image" class="form-control" id="imageInput" 
+                                   placeholder="Enter the author's image URL...">
+                            <div class="form-text">Leave blank to use default author image</div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-file-text me-2"></i>Author Biography
+                        </h4>
+                        <div class="mb-3">
+                            <label for="descriptionTextarea" class="form-label fw-semibold">Author Biography/Description</label>
+                            <textarea name="description" class="form-control" id="descriptionTextarea" 
+                                      rows="6" placeholder="Write about the author's background, achievements, notable works, and literary style..."></textarea>
+                            <div class="form-text">Provide a comprehensive biography of the author</div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn text-white" type="submit" style="background-color: #228B22;">
+                                <i class="bi bi-plus-lg me-1"></i>Add Author
+                            </button>
+                            <a class="btn btn-secondary" href="/admin/author">
+                                <i class="bi bi-x-lg me-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                <a class="btn btn-secondary" href="/admin/author">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

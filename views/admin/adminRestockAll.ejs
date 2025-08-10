@@ -1,0 +1,154 @@
+
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                <a href="/admin/restock" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-box-seam me-2"></i>Restock
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title" style="color: #8B4513;">
+                                <i class="bi bi-box-seam me-2"></i>Book Restock Management
+                            </h3>
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Manage inventory levels for books with low stock
+                            </p>
+                        </div>
+                        <a href="/admin/book" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Back to Books
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Success/Error Messages -->
+            <div id="messageDiv" class="alert alert-dismissible fade show d-none" role="alert">
+                <span id="messageText"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">(Showing <%=start+1%> to <%=start+books.length%> of <%=cnt%> books with low stock)</h6>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead style="background-color: #8B4513; color: white;">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Author</th>
+                                    <th scope="col">Publisher</th>
+                                    <th scope="col">Current Stock</th>
+                                    <th scope="col">New Stock</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for(let i = 0; i < books.length; i++){ %>
+                                    <tr>
+                                        <td><%= books[i].id %></td>
+                                        <td>
+                                            <img class="img-thumbnail shadow-sm" width="60px" src="<%= books[i].image %>" alt="Book cover"/>
+                                        </td>
+                                        <td class="fw-semibold"><%= books[i].name %></td>
+                                        <td class="text-muted"><%= books[i].author_name || 'N/A' %></td>
+                                        <td class="text-muted"><%= books[i].publisher_name || 'N/A' %></td>
+                                        <td>
+                                            <% if(books[i].stock < 10) { %>
+                                                <span class="badge bg-danger"><%= books[i].stock %></span>
+                                            <% } else if(books[i].stock < 25) { %>
+                                                <span class="badge bg-warning text-dark"><%= books[i].stock %></span>
+                                            <% } else { %>
+                                                <span class="badge bg-info text-dark"><%= books[i].stock %></span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <form method="post" action="/admin/restock/update" class="d-inline">
+                                                <input type="hidden" name="bookId" value="<%= books[i].id %>">
+                                                <input type="number" name="restock" class="form-control form-control-sm" 
+                                                       value="<%= books[i].stock %>" min="0" max="1000" required
+                                                       style="width: 80px;">
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-sm text-white" style="background-color: #228B22;">
+                                                <i class="bi bi-arrow-up-circle me-1"></i>Update
+                                            </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-3">
+                <div id="paginationDiv" data-pages="<%=pages%>" data-page="<%=currentPage%>" data-href="<%=target%>"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/scripts/pagination.js"></script>
+
+<script>
+    // Handle success/error messages
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
+    
+    if (success) {
+        showMessage(success, 'success');
+    } else if (error) {
+        showMessage(error, 'danger');
+    }
+    
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('messageDiv');
+        const messageText = document.getElementById('messageText');
+        
+        messageDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        messageText.textContent = message;
+        messageDiv.classList.remove('d-none');
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            messageDiv.classList.add('d-none');
+        }, 5000);
+    }
+</script>

@@ -1,0 +1,340 @@
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <!-- Header Card -->
+            <div class="card shadow-lg mt-3 mb-4" style="border: none; background: linear-gradient(135deg, #fcf3ed 0%, #ffffff 100%);">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="card-title mb-2 fw-bold" style="color: #654321;">
+                                <i class="bi bi-gear-fill me-3" style="color: #8B4513;"></i>Manage Voucher: <%= voucher.name %>
+                            </h2>
+                            <p class="mb-0" style="color: #8D6E63;">
+                                <i class="bi bi-info-circle me-2"></i>
+                                View distribution history and manage voucher assignments
+                            </p>
+                        </div>
+                        <a href="/admin/voucher" class="btn btn-light btn-lg shadow-sm" 
+                           style="border: 2px solid #8B4513; color: #654321;">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Vouchers
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Success/Error Messages -->
+            <div id="messageDiv" class="alert alert-dismissible fade show d-none shadow-sm" role="alert" style="border-left: 4px solid #8B4513;">
+                <span id="messageText"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <!-- Voucher Information Card -->
+            <div class="card shadow-lg mb-4" style="border: none; border-radius: 15px;">
+                <div class="card-header text-white py-4" style="background: linear-gradient(90deg, #A0522D 0%, #95512c 100%); border: none;">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-circle me-3" style="background-color: rgba(255, 255, 255, 0.2);">
+                            <i class="bi bi-tag-fill fs-2 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-1 fw-bold" style="color: #FFF8DC;">Voucher Details</h4>
+                            <p class="mb-0" style="color: #F5DEB3; opacity: 0.9;">Current voucher information and status</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4" style="background-color: #fafafa;">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="text-center p-3 rounded-3" style="background: linear-gradient(135deg, #D2B48C 0%, #e1a162 100%); color: #3E2723;">
+                                <i class="bi bi-code-slash fs-1 mb-2" style="color: #5D4037;"></i>
+                                <h6 class="mb-1 text-uppercase" style="color: #6D4C41; font-weight: 600;">Voucher Code</h6>
+                                <h5 class="mb-0 fw-bold" style="color: #3E2723;"><%= voucher.name %></h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-3 rounded-3" style="background: linear-gradient(135deg, #C8E6C9 0%, #A5D6A7 100%); color: #1B5E20;">
+                                <i class="bi bi-percent fs-1 mb-2" style="color: #2E7D32;"></i>
+                                <h6 class="mb-1 text-uppercase" style="color: #388E3C; font-weight: 600;">Discount</h6>
+                                <h5 class="mb-0 fw-bold" style="color: #1B5E20;"><%= voucher.discount %>% OFF</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-3 rounded-3" style="background: linear-gradient(135deg, #f0d1a7 0%, #ecdb95 100%); color: #7D6608;">
+                                <i class="bi bi-currency-dollar fs-1 mb-2" style="color: #935116;"></i>
+                                <h6 class="mb-1 text-uppercase" style="color: #8D6E63; font-weight: 600;">Max Discount</h6>
+                                <h5 class="mb-0 fw-bold" style="color: #7D6608;">৳<%= voucher.cap %></h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-3 rounded-3" style="background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 100%); color: #2E7D32;">
+                                <i class="bi bi-calendar-event fs-1 mb-2" style="color: #388E3C;"></i>
+                                <h6 class="mb-1 text-uppercase" style="color: #4CAF50; font-weight: 600;">Valid Until</h6>
+                                <h5 class="mb-0 fw-bold" style="color: #2E7D32;"><%= new Date(voucher.validity).toLocaleDateString() %></h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Distribution History -->
+            <div class="card shadow-lg" style="border: none; border-radius: 15px;">
+                <div class="card-header text-white py-4" style="background: linear-gradient(90deg, #2c5038 0%, #2c5038 100%); border: none;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="p-3 rounded-circle me-3" style="background-color: rgba(255, 255, 255, 0.2);">
+                                <i class="bi bi-people-fill fs-2 text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-1 fw-bold" style="color: #FFF8DC;">Distribution History</h4>
+                                <p class="mb-0" style="color: #F5DEB3; opacity: 0.9;">Users who have received this voucher</p>
+                            </div>
+                        </div>
+                        <% if (distributionHistory.length > 0) { %>
+                        <button class="btn btn-danger btn-lg shadow-sm" onclick="revokeFromAll()">
+                            <i class="bi bi-x-circle me-2"></i>Revoke from All Users
+                        </button>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="card-body p-4" style="background-color: #fafafa;">
+                    <% if (distributionHistory.length === 0) { %>
+                    <div class="text-center text-muted py-5">
+                        <i class="bi bi-inbox fs-1 mb-3"></i>
+                        <h5>No Distribution History</h5>
+                        <p class="mb-0">This voucher hasn't been sent to any users yet.</p>
+                    </div>
+                    <% } else { %>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead style="background-color: #f8f9fa;">
+                                <tr>
+                                    <th style="color: #ffffff;"><i class="bi bi-person me-2"></i>User</th>
+                                    <th style="color: #ffffff;"><i class="bi bi-envelope me-2"></i>Email</th>
+                                    <th style="color: #ffffff;"><i class="bi bi-calendar me-2"></i>Sent At</th>
+                                    <th style="color: #ffffff;"><i class="bi bi-check-circle me-2"></i>Status</th>
+                                    <th style="color: #ffffff;"><i class="bi bi-eye me-2"></i>Read</th>
+                                    <th style="color: #ffffff;"><i class="bi bi-gear me-2"></i>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% distributionHistory.forEach(function(history) { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                                <%= history.user_name.charAt(0).toUpperCase() %>
+                                            </div>
+                                            <strong><%= history.user_name %></strong>
+                                        </div>
+                                    </td>
+                                    <td><%= history.user_email %></td>
+                                    <td><%= new Date(history.created_at).toLocaleDateString() %></td>
+                                    <td>
+                                        <% if (history.status === 'Used') { %>
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>Used
+                                        </span>
+                                        <% } else if (history.status === 'Revoked') { %>
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Revoked
+                                        </span>
+                                        <% } else { %>
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-clock me-1"></i>Active
+                                        </span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (history.is_read) { %>
+                                        <span class="text-success">
+                                            <i class="bi bi-check-circle me-1"></i>Read
+                                        </span>
+                                        <% } else { %>
+                                        <span class="text-muted">
+                                            <i class="bi bi-circle me-1"></i>Unread
+                                        </span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (history.status === 'Active') { %>
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                onclick="revokeFromUser(<%= history.user_id %>, '<%= history.user_name %>')">
+                                            <i class="bi bi-x-circle me-1"></i>Revoke
+                                        </button>
+                                        <% } else if (history.status === 'Used') { %>
+                                        <small class="text-muted">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Used on <%= new Date(history.used_at).toLocaleDateString() %>
+                                        </small>
+                                        <% } else { %>
+                                        <small class="text-muted">
+                                            <i class="bi bi-ban me-1"></i>Revoked
+                                        </small>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Revocation Modal -->
+<div class="modal fade" id="revocationModal" tabindex="-1" aria-labelledby="revocationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #8B4513; color: white;">
+                <h5 class="modal-title" id="revocationModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Revoke Voucher
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="revocationMessage"></p>
+                <div class="mb-3">
+                    <label for="revocationReason" class="form-label fw-semibold">Reason for revocation:</label>
+                    <textarea class="form-control" id="revocationReason" rows="3" 
+                              placeholder="Enter the reason for revoking this voucher..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmRevocation">
+                    <i class="bi bi-x-circle me-2"></i>Revoke Voucher
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(139, 69, 19, 0.05);
+    }
+    
+    .btn:focus {
+        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.3) !important;
+    }
+</style>
+
+<script>
+    let currentRevocation = null;
+    
+    // Handle success/error messages
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
+    
+    if (success) {
+        showMessage(success, 'success');
+    } else if (error) {
+        showMessage(error, 'danger');
+    }
+    
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('messageDiv');
+        const messageText = document.getElementById('messageText');
+        
+        messageDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        messageText.textContent = message;
+        messageDiv.classList.remove('d-none');
+        
+        setTimeout(() => {
+            messageDiv.classList.add('d-none');
+        }, 5000);
+    }
+    
+    function revokeFromUser(userId, userName) {
+        currentRevocation = { userId, type: 'user' };
+        document.getElementById('revocationMessage').textContent = 
+            `Are you sure you want to revoke this voucher from ${userName}? This action cannot be undone.`;
+        new bootstrap.Modal(document.getElementById('revocationModal')).show();
+    }
+    
+    function revokeFromAll() {
+        currentRevocation = { type: 'all' };
+        document.getElementById('revocationMessage').textContent = 
+            'Are you sure you want to revoke this voucher from ALL users? This action cannot be undone.';
+        new bootstrap.Modal(document.getElementById('revocationModal')).show();
+    }
+    
+    document.getElementById('confirmRevocation').addEventListener('click', async function() {
+        const reason = document.getElementById('revocationReason').value.trim();
+        if (!reason) {
+            alert('Please provide a reason for revocation.');
+            return;
+        }
+        
+        const button = this;
+        button.disabled = true;
+        button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Revoking...';
+        
+        try {
+            let url, data;
+            if (currentRevocation.type === 'all') {
+                url = `/admin/voucher/revoke-all/<%= voucher.id %>`;
+                data = { reason };
+            } else {
+                url = `/admin/voucher/revoke-user/<%= voucher.id %>`;
+                data = { userId: currentRevocation.userId, reason };
+            }
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                window.location.href = `/admin/voucher/manage/<%= voucher.id %>?success=${encodeURIComponent(result.message)}`;
+            } else {
+                showMessage(result.message || 'Failed to revoke voucher', 'danger');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showMessage('An error occurred while revoking the voucher', 'danger');
+        } finally {
+            button.disabled = false;
+            button.innerHTML = '<i class="bi bi-x-circle me-2"></i>Revoke Voucher';
+            bootstrap.Modal.getInstance(document.getElementById('revocationModal')).hide();
+        }
+    });
+</script>

@@ -1,0 +1,48 @@
+BookStop - Online Bookstore Management System
+==============================================
+
+PROJECT OVERVIEW:
+BookStop is a full-stack e-commerce web application developed for CSE216: Database Sessional. 
+It provides a complete online bookstore with customer and administrative functionalities.
+
+TECHNOLOGY STACK:
+- Backend: Node.js, Express.js, PostgreSQL
+- Frontend: EJS, Bootstrap 5
+- Security: JWT authentication, bcrypt password hashing
+
+KEY FEATURES:
+
+USER MANAGEMENT:
+- Secure user registration and authentication
+- Multi-role support (Customer, Author, Publisher, Admin)
+- Profile management and order history
+
+BOOK CATALOG:
+- Comprehensive book information (ISBN, price, stock, ratings)
+- Genre-based categorization and filtering
+- Advanced search and sorting (price, rating)
+- Review system for verified purchasers
+
+SHOPPING SYSTEM:
+- Shopping cart with quantity management
+- Wishlist functionality
+- Order placement with shipping details
+- Voucher/discount system
+
+ADMIN FEATURES:
+- Dashboard with statistics
+- Inventory management (add, edit, delete, restock)
+- Author and Publisher management
+- Order management with status tracking
+- User and voucher management
+
+DATABASE FEATURES:
+- Stored procedures for order processing
+- Triggers for automatic stock updates and rating calculations
+- Transaction management and referential integrity
+- Performance optimization with indexes
+
+TEAM:
+- Humaira Ali Shuvra (2205126)
+- Mahjabin Porshi (2205127)
+- Supervisor: Niaz Rahman, CSE Dept, BUET

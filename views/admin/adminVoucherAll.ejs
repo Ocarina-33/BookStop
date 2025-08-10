@@ -1,0 +1,191 @@
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <h3 class="card-title" style="color: #8B4513;">
+                        <i class="bi bi-tag me-2"></i>Voucher Management
+                    </h3>
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Create and manage discount vouchers for customers
+                    </p>
+                    <a href="/admin/voucher/add" class="btn text-white" style="background-color: #228B22;">
+                        <i class="bi bi-plus-lg me-1"></i>ADD NEW VOUCHER
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Success/Error Messages -->
+            <div id="messageDiv" class="alert alert-dismissible fade show d-none" role="alert">
+                <span id="messageText"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">(Showing <%= vouchers.length %> vouchers)</h6>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead style="background-color: #8B4513; color: white;">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Voucher Name</th>
+                                    <th scope="col">Discount</th>
+                                    <th scope="col">Max Amount</th>
+                                    <th scope="col">Validity</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for(let i = 0; i < vouchers.length; i++){ %>
+                                    <tr>
+                                        <td><%= vouchers[i].id %></td>
+                                        <td class="fw-semibold">
+                                            <i class="bi bi-tag-fill me-1" style="color: #8B4513;"></i>
+                                            <%= vouchers[i].name %>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <%= vouchers[i].discount %>%
+                                            </span>
+                                        </td>
+                                        <td class="text-success fw-bold">৳<%= vouchers[i].cap %></td>
+                                        <td>
+                                            <% 
+                                                let validityDate = new Date(vouchers[i].validity);
+                                                let today = new Date();
+                                                let isExpired = validityDate < today;
+                                            %>
+                                            <span class="<%= isExpired ? 'text-danger' : 'text-success' %>">
+                                                <%= validityDate.toLocaleDateString() %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <% 
+                                                let validityDate2 = new Date(vouchers[i].validity);
+                                                let today2 = new Date();
+                                                let isExpired2 = validityDate2 < today2;
+                                            %>
+                                            <span class="badge <%= isExpired2 ? 'bg-danger' : 'bg-success' %>">
+                                                <%= isExpired2 ? 'Expired' : 'Active' %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="/admin/voucher/edit/<%= vouchers[i].id %>" class="btn text-white" style="background-color: #4c9dba;">
+                                                    <i class="bi bi-pencil-square me-1"></i>Edit
+                                                </a>
+                                                <% 
+                                                    let validityDate3 = new Date(vouchers[i].validity);
+                                                    let today3 = new Date();
+                                                    let isExpired3 = validityDate3 < today3;
+                                                %>
+                                                <% if (!isExpired3) { %>
+                                                    <a href="/admin/voucher/send/<%= vouchers[i].id %>" class="btn text-white me-2" style="background-color: #28793c;" >
+                                                        <i class="bi bi-send me-1"></i>Send
+                                                    </a>
+                                                <% } %>
+                                                    <a href="/admin/voucher/manage/<%= vouchers[i].id %>" class="btn text-white me-2"
+                                                    style="background-color: #12396b;">
+                                                        <i class="bi bi-gear me-1"></i>Manage
+                                                    </a>
+                                                <button type="button" class="btn btn-danger" onclick="deleteVoucher(<%= vouchers[i].id %>, '<%= vouchers[i].name %>')">
+                                                    <i class="bi bi-trash me-1"></i>Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete the voucher "<span id="voucherName"></span>"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle success/error messages
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
+    
+    if (success) {
+        showMessage(success, 'success');
+    } else if (error) {
+        showMessage(error, 'danger');
+    }
+    
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('messageDiv');
+        const messageText = document.getElementById('messageText');
+        
+        messageDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        messageText.textContent = message;
+        messageDiv.classList.remove('d-none');
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            messageDiv.classList.add('d-none');
+        }, 5000);
+    }
+    
+    function deleteVoucher(id, name) {
+        document.getElementById('voucherName').textContent = name;
+        document.getElementById('deleteForm').action = '/admin/voucher/delete/' + id;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+</script>

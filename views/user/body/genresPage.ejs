@@ -1,0 +1,257 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Genres</li>
+    </ol>
+</nav>
+
+<style>
+.book-card {
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.genre-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.genre-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #427819;
+}
+
+.genre-title {
+    color: #282c30;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.genre-card:hover .genre-title {
+    color: #427819;
+}
+
+.genre-icon {
+    font-size: 2rem;
+    color: #427819;
+    margin-bottom: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.genre-card:hover .genre-icon {
+    transform: scale(1.1);
+}
+
+.genre-count {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.filter-section {
+    background: linear-gradient(135deg, #f9f2e0 0%, #f9f2e0 100%);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.price-input {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 8px 12px;
+    transition: border-color 0.3s ease;
+}
+
+.price-input:focus {
+    border-color: #7bae48;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.filter-btn {
+    background: linear-gradient(135deg, #f5d121 0%, #edcd2f 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: linear-gradient(135deg, #fcec36 0%, #e9df6d 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px #ede04e(0,123,255,0.3);
+}
+
+.clear-btn {
+    background: linear-gradient(135deg, #669ec4 0%, #669ec4 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+    background: linear-gradient(135deg, #479bd3 0%, #2e8ece 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px #669ec4(108,117,125,0.3);
+}
+
+
+.sort-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 8px 12px;
+    transition: border-color 0.3s ease;
+}
+
+.sort-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.genre-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .genre-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+    
+    .filter-section {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<!-- Search Section -->
+<div class="filter-section">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <h2 class="mb-2"><i class="bi bi-tags me-2"></i>Explore Book Genres</h2>
+            <p class="mb-3 text-muted">Discover books across <%= genres.length %> different genres. Find your next favorite read!</p>
+        </div>
+        <div class="col-lg-4">
+            <div class="input-group">
+                <input type="text" class="form-control price-input" id="genreSearch" placeholder="Search genres...">
+                <button class="btn filter-btn" type="button" onclick="searchGenres()">
+                    <i class="bi bi-search me-1"></i>Search
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Bar -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info border-0" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong><%= genres.length %> genres</strong> available • Find books by category • Click any genre to explore books
+        </div>
+    </div>
+</div>
+
+<!-- Genres Grid -->
+<div class="genre-grid" id="genresContainer">
+    <% genres.forEach((genre, index) => { %>
+        <div class="card genre-card h-100" onclick="window.location.href='/genres/search?genre=<%= encodeURIComponent(genre.genre) %>'">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="genre-icon">
+                    <% 
+                    // Assign icons based on genre content
+                    let icon = 'bi-book';
+                    const genreName = genre.genre.toLowerCase();
+                    if (genreName.includes('fiction') || genreName.includes('উপন্যাস')) icon = 'bi-journal-text';
+                    else if (genreName.includes('poetry') || genreName.includes('কবিতা')) icon = 'bi-pen';
+                    else if (genreName.includes('history') || genreName.includes('ইতিহাস')) icon = 'bi-clock-history';
+                    else if (genreName.includes('science') || genreName.includes('বিজ্ঞান')) icon = 'bi-rocket';
+                    else if (genreName.includes('children') || genreName.includes('শিশু')) icon = 'bi-emoji-smile';
+                    else if (genreName.includes('biography') || genreName.includes('জীবনী')) icon = 'bi-person';
+                    else if (genreName.includes('romance') || genreName.includes('রোমান্টিক')) icon = 'bi-heart';
+                    else if (genreName.includes('mystery') || genreName.includes('রহস্য')) icon = 'bi-search';
+                    else if (genreName.includes('religion') || genreName.includes('ইসলামি') || genreName.includes('ধর্মীয়')) icon = 'bi-book-half';
+                    else if (genreName.includes('politics') || genreName.includes('রাজনীতি')) icon = 'bi-flag';
+                    else if (genreName.includes('travel') || genreName.includes('ভ্রমণ')) icon = 'bi-airplane';
+                    else if (genreName.includes('cooking') || genreName.includes('রেসিপি')) icon = 'bi-cup-hot';
+                    else if (genreName.includes('horror') || genreName.includes('ভৌতিক')) icon = 'bi-moon';
+                    else if (genreName.includes('thriller')) icon = 'bi-lightning';
+                    %>
+                    <i class="<%= icon %>"></i>
+                </div>
+                <h5 class="genre-title mb-2"><%= genre.genre %></h5>
+                <p class="genre-count mt-auto">
+                    <i class="bi bi-book me-1"></i><%= genre.book_count %> books
+                </p>
+            </div>
+        </div>
+    <% }); %>
+</div>
+
+<!-- No Results Message -->
+<div id="noResults" class="text-center py-5" style="display: none;">
+    <i class="bi bi-search display-1 text-muted mb-3"></i>
+    <h4 class="text-muted">No genres found</h4>
+    <p class="text-muted">Try searching with different keywords</p>
+    <button class="btn btn-primary" onclick="clearSearch()">
+        <i class="bi bi-arrow-counterclockwise me-1"></i>Show All Genres
+    </button>
+</div>
+
+<script>
+let allGenres = document.querySelectorAll('.genre-card');
+
+function searchGenres() {
+    const searchTerm = document.getElementById('genreSearch').value.toLowerCase();
+    filterGenres(searchTerm);
+}
+
+function filterGenres(searchTerm) {
+    let visibleCount = 0;
+    
+    allGenres.forEach(card => {
+        const genreTitle = card.querySelector('.genre-title').textContent.toLowerCase();
+        if (genreTitle.includes(searchTerm)) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Show/hide no results message
+    document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+    document.getElementById('genresContainer').style.display = visibleCount === 0 ? 'none' : 'grid';
+}
+
+function clearSearch() {
+    document.getElementById('genreSearch').value = '';
+    filterGenres('');
+}
+
+// Search on Enter key
+document.getElementById('genreSearch').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchGenres();
+    }
+});
+
+// Live search as user types
+document.getElementById('genreSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    filterGenres(searchTerm);
+});
+</script>

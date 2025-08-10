@@ -1,0 +1,14 @@
+<% /* index.ejs template */ %>
+<% if (books && books.length) { %>
+  <ul>
+    <% books.forEach(book => { %>
+      <li>
+        <img src="<%= book.image %>" alt="<%= book.name %> cover" width="80">
+        <a href="/books/<%= book.id %>"><%= book.name %></a>
+        by <%= book.author_name %> — ৳<%= book.price %>
+      </li>
+    <% }) %>
+  </ul>
+<% } else { %>
+  <p>No books found.</p>
+<% } %>

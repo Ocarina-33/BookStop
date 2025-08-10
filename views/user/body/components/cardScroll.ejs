@@ -1,0 +1,150 @@
+<style>
+.book-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.book-card:hover {
+    transform: translateY(-8px) rotateY(-5deg);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.book-cover-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    margin: 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    box-shadow: 
+        -3px 0 8px rgba(0,0,0,0.15),
+        0 2px 10px rgba(0,0,0,0.1),
+        inset -2px 0 4px rgba(0,0,0,0.1);
+}
+
+.book-cover-wrapper::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(180deg, 
+        rgba(0,0,0,0.2) 0%, 
+        rgba(0,0,0,0.1) 50%, 
+        rgba(0,0,0,0.2) 100%);
+    z-index: 2;
+}
+
+.book-cover-wrapper::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, 
+        rgba(255,255,255,0.4) 0%, 
+        rgba(255,255,255,0.2) 50%, 
+        rgba(255,255,255,0.4) 100%);
+    z-index: 3;
+}
+
+.book-card img {
+    transition: transform 0.3s ease;
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 6px;
+    position: relative;
+    z-index: 1;
+}
+
+.book-card:hover img {
+    transform: scale(1.02);
+}
+
+.book-card:hover .book-cover-wrapper {
+    box-shadow: 
+        -5px 0 15px rgba(0,0,0,0.25),
+        0 5px 20px rgba(0,0,0,0.15),
+        inset -3px 0 6px rgba(0,0,0,0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .book-card img {
+        height: 160px;
+    }
+    
+    .book-cover-wrapper {
+        margin: 10px;
+    }
+    
+    .book-card:hover {
+        transform: translateY(-5px) rotateY(-2deg);
+    }
+}
+
+@media (max-width: 576px) {
+    .book-card img {
+        height: 140px;
+    }
+    
+    .book-cover-wrapper {
+        margin: 8px;
+    }
+}
+</style>
+
+<div class="container-fluid overflow-scroll my-scrollbar">
+    <div class="row flex-nowrap">
+        <% if(books && books.length > 0){ %>
+            <% for(let i = 0;i < books.length;i++){ %>
+            <div class="col">
+                <div class="card book-card" style="width: 12rem;height: 100%;">
+                    <div class="book-cover-wrapper">
+                        <img class="card-img-top" src="<%= books[i].image %>" alt="<%= books[i].name %>">
+                    </div>
+                    <div class="card-body" style="display: flex;flex-direction: column;justify-content:space-between;">
+
+                        <div>
+                            <p style="color: #266dd3;font-weight: 650; font-size: 18px;"
+                               class="card-title"><%= books[i].name %></p>
+                            <span style="font-weight: 510; font-size: 16px;"><%= books[i].author_name %></span><br/>
+
+                        </div>
+
+                        <div>
+                                <span class="ml-0">
+                                    <% if(books[i].review_count){ %>
+                                        <% for(let stars = 0; stars < Math.round(parseFloat(books[i].star)); stars++){ %>
+                                            ⭐
+                                        <% } %>
+                                    <% }else{ %>
+                                        No Reviews yet
+                                    <% } %>
+                                </span>
+                            <h6 class="card-title">Price: TK. <%= books[i].price %></h6>
+                            <div class="d-grid gap-2">
+                                <a href=<%= "/books/"+books[i].id %> class="btn btn-warning">
+                                <i class="bi bi-book-half"></i>
+                                VIEW BOOK
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        <% } else { %>
+            <div class="col-12 text-center p-3">
+                <p>No books available at the moment.</p>
+            </div>
+        <% } %>
+    </div>
+</div>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-User Session Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .user-section { 
+            border: 2px solid #ddd; 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin: 15px 0; 
+            background: #f9f9f9; 
+        }
+        .current-user { border-color: #007bff; background: #e7f3ff; }
+        .login-form { display: inline-block; margin: 10px; }
+        .session-info { background: #fff; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .status { font-weight: bold; }
+        .success { color: green; }
+        .error { color: red; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+        .quick-login { background: #28a745; color: white; border: none; border-radius: 4px; }
+        .logout { background: #dc3545; color: white; border: none; border-radius: 4px; }
+        .switch { background: #17a2b8; color: white; border: none; border-radius: 4px; }
+        .refresh { background: #6c757d; color: white; border: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🔐 Multi-User Session Test</h1>
+    
+    <div class="session-info">
+        <h3>Current Session Status</h3>
+        <div id="currentStatus">Loading...</div>
+    </div>
+
+    <div class="user-section">
+        <h3>Quick Login Test Users</h3>
+        <button class="quick-login" onclick="quickLogin('miku@gmail.com', '123')">Login as Miku</button>
+        <button class="quick-login" onclick="quickLogin('eren@gmail.com', '123')">Login as Eren</button>
+        <button class="logout" onclick="logout()">Logout Current</button>
+        <button class="refresh" onclick="refreshStatus()">Refresh Status</button>
+    </div>
+
+    <div class="user-section">
+        <h3>All Active Sessions</h3>
+        <div id="allSessions">Loading...</div>
+    </div>
+
+    <div class="user-section">
+        <h3>Debug Information</h3>
+        <div id="debugInfo">Loading...</div>
+    </div>
+
+    <script>
+        // Quick login function
+        async function quickLogin(email, password) {
+            try {
+                console.log(`Attempting login for ${email}`);
+                
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateStatus(`✅ Successfully logged in as ${email}`, 'success');
+                    await refreshStatus();
+                } else {
+                    updateStatus(`❌ Login failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                updateStatus(`❌ Login error: ${error.message}`, 'error');
+            }
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                const response = await fetch('/logout', {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    updateStatus('✅ Logged out successfully', 'success');
+                    await refreshStatus();
+                } else {
+                    updateStatus('❌ Logout failed', 'error');
+                }
+            } catch (error) {
+                updateStatus(`❌ Logout error: ${error.message}`, 'error');
+            }
+        }
+
+        // Switch to a specific session
+        async function switchSession(sessionId) {
+            try {
+                const response = await fetch('/debug/switch-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ sessionId })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateStatus(`✅ Switched to session ${sessionId}`, 'success');
+                    await refreshStatus();
+                } else {
+                    updateStatus(`❌ Switch failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                updateStatus(`❌ Switch error: ${error.message}`, 'error');
+            }
+        }
+
+        // Update status message
+        function updateStatus(message, type = '') {
+            const statusDiv = document.getElementById('currentStatus');
+            statusDiv.innerHTML = `<span class="status ${type}">${message}</span>`;
+        }
+
+        // Refresh all session information
+        async function refreshStatus() {
+            try {
+                // Get current session info
+                const sessionResponse = await fetch('/debug/sessions');
+                const sessionData = await sessionResponse.json();
+
+                // Update current status
+                const currentUser = sessionData.currentUser;
+                if (currentUser) {
+                    document.getElementById('currentStatus').innerHTML = `
+                        <div class="status success">
+                            ✅ Logged in as: <strong>${currentUser.name}</strong> (${currentUser.email})
+                            <br>Session ID: ${currentUser.sessionId}
+                            <br>Active Session: ${sessionData.activeSessionId}
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('currentStatus').innerHTML = `
+                        <div class="status">❌ No user logged in</div>
+                    `;
+                }
+
+                // Update all sessions
+                const sessionsDiv = document.getElementById('allSessions');
+                if (sessionData.allSessions && sessionData.allSessions.length > 0) {
+                    let sessionsHtml = `<p><strong>Total Sessions: ${sessionData.totalSessions}</strong></p>`;
+                    sessionData.allSessions.forEach(session => {
+                        sessionsHtml += `
+                            <div class="session-info" style="background: ${session.isActive ? '#e7f3ff' : '#fff'};">
+                                <strong>${session.userName}</strong> (${session.userEmail})
+                                <br>Session ID: ${session.sessionId}
+                                <br>User ID: ${session.userId}
+                                <br>Status: ${session.isActive ? '🟢 Active' : '⚪ Inactive'}
+                                ${!session.isActive ? `<button class="switch" onclick="switchSession('${session.sessionId}')">Switch to This</button>` : ''}
+                            </div>
+                        `;
+                    });
+                    sessionsDiv.innerHTML = sessionsHtml;
+                } else {
+                    sessionsDiv.innerHTML = '<p>No active sessions found</p>';
+                }
+
+                // Update debug info
+                document.getElementById('debugInfo').innerHTML = `
+                    <pre>${JSON.stringify(sessionData, null, 2)}</pre>
+                `;
+
+            } catch (error) {
+                updateStatus(`❌ Refresh error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-refresh every 5 seconds
+        setInterval(refreshStatus, 5000);
+        
+        // Initial load
+        refreshStatus();
+    </script>
+</body>
+</html>

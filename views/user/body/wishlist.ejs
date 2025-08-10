@@ -1,0 +1,89 @@
+<div class="row">
+    <div class="col-lg-3 col-md-4">
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-4">
+                        <img class="circular shadow-sm" src="<%= user && user.image ? user.image : '/images/propic.jpg' %>" width="60" height="60" alt="Profile Picture">
+                    </div>
+                    <div class="col-8">
+                        <p class="text-muted mb-1">Welcome back,</p>
+                        <h5 class="mb-0 fw-bold"><%= user.name %></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="/My-section/profile" class="list-group-item list-group-item-action border-0 fw-semibold" aria-current="true">
+                        <i class="bi bi-person-circle me-3"></i>My Account
+                    </a>
+                    <a href="/My-section/orders" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-bag-check me-3"></i>My Orders
+                    </a>
+                    <a href="/My-section/wishlist" class="list-group-item list-group-item-action active border-0 fw-semibold">
+                        <i class="bi bi-heart me-3"></i>My Wishlist
+                    </a>
+                    <a href="/My-section/reviews" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-star me-3"></i>My Reviews
+                    </a>
+                    <a href="/my-section/notifications" class="list-group-item list-group-item-action border-0 fw-semibold">
+                        <i class="bi bi-bell me-3"></i>Notifications
+                                                    <% if (unreadCount > 0) { %>
+                                <span class="badge bg-danger rounded-pill float-end"><%= unreadCount %></span>
+                            <% } %>
+                    </a>
+                </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+    
+    <div class="col-lg-9 col-md-8">
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-heart-fill text-danger me-3 fs-4"></i>
+                    <h3 class="mb-0">My Wishlist</h3>
+                    <span class="badge bg-primary ms-3 fs-6"><%= wishList.length %> items</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow border-0 mt-3">
+            <div class="card-body p-0">
+                <% if(wishList.length === 0) { %>
+                    <div class="text-center py-5">
+                        <i class="bi bi-heart display-1 text-muted mb-3"></i>
+                        <h4 class="text-muted">Your wishlist is empty</h4>
+                        <p class="text-muted">Start adding books you love to your wishlist!</p>
+                        <a href="/books" class="btn btn-primary rounded-pill px-4">Browse Books</a>
+                    </div>
+                <% } else { %>
+                    <% for(let i = 0;i < wishList.length;i++){ %>
+                        <div class="row align-items-center py-3 <%= i < wishList.length - 1 ? 'border-bottom' : '' %>">
+                            <div class="col-md-3 col-sm-4 text-center">
+                                <img class="img-fluid rounded shadow-sm" style="max-width: 150px; height: auto;" src="<%= wishList[i].image %>" alt="<%= wishList[i].book_name %>"/>
+                            </div>
+                            <div class="col-md-9 col-sm-8">
+                                <a href="<%= "/books/"+wishList[i].book_id %>" class="text-decoration-none">
+                                    <h5 class="card-title mb-2 text-primary"><%= wishList[i].book_name %></h5>
+                                </a>
+                                <p class="text-muted mb-2">by <span class="fw-semibold"><%= wishList[i].author_name %></span></p>
+                                <h6 class="text-success fw-bold mb-3">৳<%= wishList[i].price %></h6>
+                                <a href="<%= "/My-section/wishlist/remove/"+wishList[i].book_id %>" class="btn btn-outline-danger btn-sm rounded-pill">
+                                    <i class="bi bi-heart-break me-2"></i>Remove from Wishlist
+                                </a>
+                            </div>
+                        </div>
+                    <% } %>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+

@@ -1,0 +1,87 @@
+
+<div class="row m-0">
+    <!-- Sidebar -->
+    <div class="col-2 p-0">
+        <div class="sidebar text-white p-3" style="background-color: #654321; height: 100vh; position: fixed; width: 16.666%;">
+            <div class="list-group list-group-flush">
+                <a href="/admin" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a href="/admin/book" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-book me-2"></i>Books
+                </a>
+                <a href="/admin/author" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-person me-2"></i>Authors
+                </a>
+                <a href="/admin/publisher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #8B4513; border: none;">
+                    <i class="bi bi-building me-2"></i>Publishers
+                </a>
+                <a href="/admin/order" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-cart me-2"></i>Orders
+                </a>
+                <a href="/admin/voucher" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-tag me-2"></i>Vouchers
+                </a>
+                                <a href="/admin/users" class="list-group-item list-group-item-action text-white mb-2 rounded" style="background-color: #7d5a32; border: none;">
+                    <i class="bi bi-people me-2"></i>Users
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-10 offset-2">
+        <div class="container-fluid">
+            <div class="card shadow-sm mt-3 mb-3" style="border-color: #8B4513;">
+                <div class="card-body">
+                    <h3 class="card-title" style="color: #8B4513;">
+                        <i class="bi bi-plus-circle me-2"></i>Add New Publisher
+                    </h3>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form action="/admin/publisher/add" method="post">
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-info-circle me-2"></i>Basic Information
+                        </h4>
+                        <div class="mb-3">
+                            <label for="nameInput" class="form-label fw-semibold">Publisher Name *</label>
+                            <input type="text" name="name" class="form-control" id="nameInput" 
+                                   placeholder="Enter the publisher's name..." required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="foundingDateInput" class="form-label fw-semibold">Founding Date</label>
+                            <input type="date" name="founding_date" class="form-control" id="foundingDateInput">
+                            <div class="form-text">When was this publisher established?</div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h4 class="mb-3" style="color: #8B4513;">
+                            <i class="bi bi-image me-2"></i>Publisher Logo
+                        </h4>
+                        <div class="mb-3">
+                            <label for="imageInput" class="form-label fw-semibold">Logo URL</label>
+                            <input type="url" name="image" class="form-control" id="imageInput" 
+                                   placeholder="Enter the publisher's logo URL...">
+                            <div class="form-text">Leave blank to use default publisher logo</div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn text-white" type="submit" style="background-color: #228B22;">
+                                <i class="bi bi-plus-lg me-1"></i>Add Publisher
+                            </button>
+                            <a class="btn btn-secondary" href="/admin/publisher">
+                                <i class="bi bi-x-lg me-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
