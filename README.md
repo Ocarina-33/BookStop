@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📚 BookStop - Online Bookstore Management System
+#  BookStop - Online Bookstore Management System
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=28&duration=3000&pause=1000&color=8B4513&center=true&vCenter=true&width=600&lines=Welcome+to+BookStop!;Your+Digital+Bookstore;Built+with+Love+%26+Code" alt="Typing SVG" />
 
@@ -25,38 +25,38 @@
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 <table>
 <tr>
 <td width="50%">
 
-### 🔐 **User Management**
-- 🎯 Secure registration & authentication
-- 👥 Multi-role support (Customer, Admin)
-- 📝 Profile management & order history
-- 🔔 Real-time notifications
+###  **User Management**
+-  Secure registration & authentication
+-  Multi-role support (Customer, Admin)
+-  Profile management & order history
+-  Real-time notifications
 
 ### 📖 **Book Catalog**
-- 📚 Comprehensive book information
-- 🏷️ Genre-based categorization
-- ⭐ Advanced rating & review system
-- 🔍 Smart search & filtering
+-  Comprehensive book information
+-  Genre-based categorization
+-  Advanced rating & review system
+-  Smart search & filtering
 
 </td>
 <td width="50%">
 
 ### 🛒 **Shopping System**
-- 🛍️ Interactive shopping cart
-- ❤️ Wishlist functionality
-- 📦 Order tracking system
-- 🎫 Voucher & discount system
+-  Interactive shopping cart
+-  Wishlist functionality
+-  Order tracking system
+-  Voucher & discount system
 
-### 👨‍💼 **Admin Features**
-- 📊 Dashboard with analytics
-- 📋 Inventory management
-- 📈 Sales tracking
-- 👥 User management
+### **Admin Features**
+-  Dashboard with analytics
+-  Inventory management
+-  Sales tracking
+-  User management
 
 </td>
 </tr>
@@ -64,7 +64,7 @@
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 <div align="center">
 
@@ -104,16 +104,16 @@
 
 ---
 
-## 🏗️ Database Architecture
+##  Database Architecture
 
 <div align="center">
 <img src="https://user-images.githubusercontent.com/74038190/212284087-bbe7e430-757e-4901-90bf-4cd2ce3e1852.gif" width="300">
 </div>
 
-### 📊 **Database Schema (13 Tables)**
+###  **Database Schema (13 Tables)**
 
 <details>
-<summary>🔍 <b>Core Tables</b></summary>
+<summary> <b>Core Tables</b></summary>
 
 - **`app_user`** - User accounts and profiles
 - **`author`** - Book authors information  
@@ -125,7 +125,7 @@
 </details>
 
 <details>
-<summary>🔍 <b>Transaction Tables</b></summary>
+<summary> <b>Transaction Tables</b></summary>
 
 - **`book_order`** - Order management
 - **`picked`** - Cart items with quantities
@@ -135,7 +135,7 @@
 </details>
 
 <details>
-<summary>🔍 <b>Notification System</b></summary>
+<summary> <b>Notification System</b></summary>
 
 - **`notifications`** - System notifications
 - **`user_vouchers`** - Voucher assignments
@@ -145,7 +145,7 @@
 
 ---
 
-## 🚀 Installation & Setup
+##  Installation & Setup
 
 <div align="center">
 <img src="https://user-images.githubusercontent.com/74038190/212284158-e840e285-664b-44d7-b79b-e264b5e54825.gif" width="400">
@@ -153,9 +153,9 @@
 
 ### Prerequisites
 ```bash
-📦 Node.js (v14 or higher)
-🐘 PostgreSQL (v12 or higher)
-📝 Git
+ Node.js (v14 or higher)
+ PostgreSQL (v12 or higher)
+ Git
 ```
 
 ### Quick Start
@@ -195,34 +195,11 @@ psql -U postgres -d bookstore_db -f sql/CREATE_TABLES.sql
 npm start
 ```
 
-🎉 **Visit** `http://localhost:4000` to see your BookStop in action!
+ **Visit** `http://localhost:4000` to see your BookStop in action!
 
 ---
 
-## 📱 Application Screenshots
-
-<div align="center">
-
-### 🏠 Homepage
-<img src="https://user-images.githubusercontent.com/74038190/212284115-f47cd8ff-2ffb-4b04-b5bf-4d1c14c0247f.gif" width="600">
-
-*Beautiful landing page with featured books and categories*
-
-### 📚 Book Catalog
-<img src="https://user-images.githubusercontent.com/74038190/212284136-03988914-d42b-4505-b9a4-f8038e36fb91.gif" width="600">
-
-*Advanced filtering and sorting with elegant book displays*
-
-### 🛒 Shopping Experience
-<img src="https://user-images.githubusercontent.com/74038190/212284175-acc7d51c-6811-4319-9b5c-9c069e4f1825.gif" width="600">
-
-*Smooth cart management and checkout process*
-
-</div>
-
----
-
-## 🎯 Advanced Features
+##  Advanced Features
 
 <div align="center">
 <img src="https://user-images.githubusercontent.com/74038190/212284145-bf2c01a8-c448-4f1a-b911-996024c84606.gif" width="300">
@@ -248,7 +225,7 @@ npm start
 
 ---
 
-## 👥 Development Team
+##  Development Team
 
 <div align="center">
 <img src="https://user-images.githubusercontent.com/74038190/212284094-e50ceae7-de85-4f21-8d8e-9586e1c19334.gif" width="200">
@@ -277,168 +254,12 @@ npm start
 </tr>
 </table>
 
-### 👨‍🏫 **Supervisor**
+###  **Supervisor**
 **Niaz Rahman**  
 *Teacher, Department of CSE, BUET*  
 📧 mr.niazrahman@gmail.com
 
----
 
-## 📝 API Documentation
-
-<details>
-<summary>🔗 <b>User Authentication Endpoints</b></summary>
-
-```javascript
-POST /login          // User login
-POST /signup         // User registration  
-GET  /logout         // User logout
-GET  /profile        // User profile
-```
-
-</details>
-
-<details>
-<summary>🔗 <b>Book Management Endpoints</b></summary>
-
-```javascript
-GET    /books              // Get all books
-GET    /books/:id          // Get book details
-GET    /books/genre/:genre // Get books by genre
-POST   /books/search       // Search books
-```
-
-</details>
-
-<details>
-<summary>🔗 <b>Shopping Cart Endpoints</b></summary>
-
-```javascript
-GET    /cart         // View cart
-POST   /cart/add     // Add to cart
-PUT    /cart/update  // Update cart
-DELETE /cart/remove  // Remove from cart
-```
-
-</details>
-
----
-
-## 🎨 UI/UX Features
-
-<div align="center">
-<img src="https://user-images.githubusercontent.com/74038190/212284119-fbfd994d-8c2a-4c3b-9d7b-7b8b0e8e3ea6.gif" width="400">
-</div>
-
-### 🎭 **Visual Design**
-- 🎨 **3D Book Effects** with realistic shadows
-- 🌈 **Smooth Animations** and transitions
-- 📱 **Responsive Design** for all devices
-- 🎯 **Intuitive Navigation** and user flows
-
-### 💫 **Interactive Elements**
-- ⭐ **Dynamic Star Ratings**
-- 🛒 **Real-time Cart Updates**
-- 🔔 **Toast Notifications**
-- 📊 **Live Statistics Dashboard**
-
----
-
-## 🔒 Security Features
-
-<table>
-<tr>
-<td width="50%">
-
-### 🛡️ **Authentication**
-- JWT token-based sessions
-- Secure password hashing
-- Role-based access control
-- Session timeout management
-
-</td>
-<td width="50%">
-
-### 🔐 **Data Protection**
-- SQL injection prevention
-- XSS attack protection
-- CSRF token validation
-- Input sanitization
-
-</td>
-</tr>
-</table>
-
----
-
-## 📈 Performance Metrics
-
-<div align="center">
-
-[![Performance](https://img.shields.io/badge/Performance-95%25-brightgreen?style=for-the-badge)](.)
-[![Accessibility](https://img.shields.io/badge/Accessibility-92%25-green?style=for-the-badge)](.)
-[![Best_Practices](https://img.shields.io/badge/Best_Practices-98%25-brightgreen?style=for-the-badge)](.)
-[![SEO](https://img.shields.io/badge/SEO-90%25-green?style=for-the-badge)](.)
-
-</div>
-
----
-
-## 🔮 Future Enhancements
-
-<div align="center">
-<img src="https://user-images.githubusercontent.com/74038190/212284126-7cb769d6-8fa4-4e5e-8e21-c1c50e9b9ae0.gif" width="300">
-</div>
-
-- 🤖 **AI-powered book recommendations**
-- 📱 **Mobile app development**  
-- 💳 **Payment gateway integration**
-- 🌍 **Multi-language support**
-- 📊 **Advanced analytics dashboard**
-- 🔄 **Real-time inventory sync**
-
----
-
-## 🤝 Contributing
-
-<div align="center">
-<img src="https://user-images.githubusercontent.com/74038190/212284112-59ebc1ee-c0fd-4fdb-82d3-3145c2a43132.gif" width="200">
-</div>
-
-We welcome contributions! Please follow these steps:
-
-1. 🍴 Fork the repository
-2. 🌿 Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. 💾 Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. 📤 Push to the branch (`git push origin feature/AmazingFeature`)
-5. 🔄 Open a Pull Request
-
----
-
-## 📄 License
-
-<div align="center">
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-</div>
-
----
-
-## 🙏 Acknowledgments
-
-<div align="center">
-<img src="https://user-images.githubusercontent.com/74038190/212284103-e0e1e28b-e419-4ce7-a1af-82f14f8720e5.gif" width="300">
-</div>
-
-- 🏫 **Bangladesh University of Engineering and Technology (BUET)**
-- 👨‍🏫 **CSE216: Database Sessional Course**
-- 💡 **Open source community for amazing tools**
-- 🎨 **Design inspiration from modern e-commerce platforms**
-
----
 
 <div align="center">
 
