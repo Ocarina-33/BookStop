@@ -37,7 +37,7 @@
 -  Profile management & order history
 -  Real-time notifications
 
-### 📖 **Book Catalog**
+###  **Book Catalog**
 -  Comprehensive book information
 -  Genre-based categorization
 -  Advanced rating & review system
@@ -205,24 +205,17 @@ npm start
 <img src="https://user-images.githubusercontent.com/74038190/212284145-bf2c01a8-c448-4f1a-b911-996024c84606.gif" width="300">
 </div>
 
-### 🏆 **Business Logic**
+###  **Business Logic**
 - **Stored Procedures** for complex operations
 - **Database Triggers** for automatic calculations
 - **Real-time stock management**
 - **Automated rating calculations**
 
-### 🔧 **System Architecture**
+###  **System Architecture**
 - **RESTful API design**
 - **MVC pattern implementation**  
 - **Session-based authentication**
 - **Responsive design principles**
-
-### 📊 **Performance Features**
-- **Database indexing** for fast queries
-- **Pagination** for large datasets
-- **Image optimization**
-- **Caching strategies**
-
 ---
 
 ##  Development Team
